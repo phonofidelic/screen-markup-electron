@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../actions';
 import FontAwesome from 'react-fontawesome';
 
 class Tools extends Component {
 	render() {
+    const { tools } = this.props;
 		return (
 		  <div className="tools-container">
         <FontAwesome name='crop' className="tool" title="Crop image" />
+        <FontAwesome name='square' className="tool color-picker" title="Color" style={{color: tools.selectedColor}}/>
         <FontAwesome name='pencil' className="tool" title="Draw" />
         <FontAwesome name='eraser' className="tool" title="Erase" />
         <FontAwesome name='font' className="tool" title="Text" />
@@ -17,4 +21,10 @@ class Tools extends Component {
 	}
 }
 
-export default Tools;
+const mapStateToProps = state => {
+  return {
+    tools: state.toolsReducer
+  }
+}
+
+export default connect(mapStateToProps, actions)(Tools);

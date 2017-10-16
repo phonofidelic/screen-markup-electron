@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../actions';
 
 class CanvasContainer extends Component {
 
 	componentDidMount() {
+		const { tools } = this.props;
 		var canvas = document.getElementById('canvas');
 		var ctx = canvas.getContext('2d');
 		ctx.canvas.width = window.innerWidth;
@@ -36,7 +39,7 @@ class CanvasContainer extends Component {
 			rect.width = e.clientX - rect.x;
 			rect.height = e.clientY - rect.y;
 
-			ctx.strokeStyle = 'red';
+			ctx.strokeStyle = tools.selectedColor;
 			ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 
 			console.log('* rect:', rect)
@@ -52,4 +55,10 @@ class CanvasContainer extends Component {
 	}
 }
 
-export default CanvasContainer;
+const mapStateToProps = state => {
+  return {
+    tools: state.toolsReducer
+  }
+}
+
+export default connect(mapStateToProps, actions)(CanvasContainer);
