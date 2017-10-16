@@ -55,7 +55,7 @@ function createWindow() {
             submenu: [
                 {
                     label: 'Capture screen',
-                    accelerator: 'CmdOrCtrl+Shift+P',
+                    accelerator: 'CmdOrCtrl+Alt+P',
                     click: () => {captureScreen()}
                 },
                 {

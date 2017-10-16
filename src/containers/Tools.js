@@ -4,7 +4,7 @@ import FontAwesome from 'react-fontawesome';
 class Tools extends Component {
 	render() {
 		return (
-			<div className="tools-container">
+		  <div className="tools-container">
         <FontAwesome name='crop' className="tool" title="Crop image" />
         <FontAwesome name='pencil' className="tool" title="Draw" />
         <FontAwesome name='eraser' className="tool" title="Erase" />
