@@ -8,9 +8,9 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
+const inspector = window.window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
-
-const store = createStoreWithMiddleware(rootReducer);
+const store = createStoreWithMiddleware(rootReducer, inspector);
 
 ReactDOM.render(
 	<Provider store={store}>

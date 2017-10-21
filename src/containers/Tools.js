@@ -11,7 +11,13 @@ class Tools extends Component {
   }
 
 	render() {
-    const { tools, selectSquare } = this.props;
+    const { 
+      tools, 
+      selectSquare, 
+      undo, 
+      canvas 
+    } = this.props;
+
 		return (
 		  <div className="tools-container">
         <FontAwesome name='crop' className="tool" title="Crop image" />
@@ -26,8 +32,11 @@ class Tools extends Component {
                      className="tool" 
                      title="Box"
                      style={tools.square.isSelected ? {background: '#515151'} : null}
-                     onClick={() => {selectSquare(tools.canvas, tools.selectedColor)}} />
-        <FontAwesome name='undo' className="tool" title="Undo" />
+                     onClick={() => {selectSquare(canvas.canvasShapes[canvas.canvasShapes.length -1], tools.selectedColor)}} />
+        <FontAwesome name='undo' 
+                     className="tool" 
+                     title="Undo"
+                     onClick={() => {undo(canvas.canvasShapes)}} />
         <FontAwesome name='times' className="tool" title="Cancel" />
       </div>
 		);
@@ -36,7 +45,8 @@ class Tools extends Component {
 
 const mapStateToProps = state => {
   return {
-    tools: state.toolsReducer
+    tools: state.toolsReducer,
+    canvas: state.canvasReducer
   }
 }
 
