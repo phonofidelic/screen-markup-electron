@@ -15,6 +15,7 @@
     "react-fontawesome": "^1.6.1",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
+    "redux-canvas": "^1.0.3",
     "redux-thunk": "^2.2.0",
     "screenshot": "^0.1.0",
     "screenshot-node": "^1.2.1"
