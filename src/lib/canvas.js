@@ -5,7 +5,17 @@ class Canvas {
 		this.ctx = this.canvas.getContext('2d');
 		this.canvas.width = window.innerWidth;
 		this.canvas.height = window.innerHeight;
-		this.ctx.save();
+		// this.ctx.save();
+
+		// Add screenshot to canvas
+		this.screenshot = new Image();
+
+		this.screenshot.addEventListener('load', e => {
+			console.log('image loaded', this.screenshot)
+			this.ctx.drawImage(this.screenshot, 0, 0, window.innerWidth, window.innerHeight);
+		}, false);
+
+		this.screenshot.src = 'screenshot.png';
 
 		let mouseIsPressed = false;
 		let shape = {
@@ -15,7 +25,7 @@ class Canvas {
 			height: null,
 			color: '#f22a2a'	// TODO: make dynamic
 		}
-
+		
 		this.canvas.addEventListener('mousedown', e => {
 			console.log('mousedown canvas')
 			shape.x = e.clientX;
@@ -52,7 +62,14 @@ class Canvas {
 
 	undo() {
 		console.log('canvas undo', this.shape);
-		this.ctx.clearRect(this.shape.x -1, this.shape.y -1, this.shape.width +2, this.shape.height +2);
+		if (!this.shape) {
+			return console.error('Nothing to undo');
+		}
+		// TODO: find a better way to remove last draw
+		// this.ctx.clearRect(this.shape.x -1, this.shape.y -1, this.shape.width +2, this.shape.height +2);
+		this.ctx.drawImage(this.screenshot, 0, 0, window.innerWidth, window.innerHeight);
+		// Reset last draw
+		this.shape = null;
 	};
 };
 

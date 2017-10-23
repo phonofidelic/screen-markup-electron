@@ -3,7 +3,7 @@ const electron = require('electron');
 const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
-const { Menu, MenuItem } = require('electron');
+const { Menu, MenuItem, globalShortcut } = require('electron');
 
 const screenshot = require('desktop-screenshot');
 
@@ -16,15 +16,13 @@ const startUrl = process.env.ELECTRON_START_URL || url.format({
   slashes: true
 });
 
-// const menu = new Menu();
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 const captureScreen = () => {
   console.log('*capture screen*');
-  screenshot("screenshot.png", function(error, complete) {
+  screenshot(path.join(__dirname, '/../build/screenshot.png'), function(error, complete) {
     if(error)
       console.log("Screenshot failed", error);
     else
@@ -80,7 +78,24 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', () => {
+  const reg = globalShortcut.register('CmdOrCtrl+Alt+P', () => {
+    if (!reg) {
+      console.log('global shortcut registration failed');
+    }
+    console.log('global screenshot')
+    // TODO: Create promise to wait untill captureScreen has saved
+    //       the new screenshot before calling createWindow().
+    captureScreen();
+    createWindow();
+  });
+});
+
+
+
+app.on('will-quit', () => {
+  globalShortCut.unregister('CmdOrCtrl+Alt+P');
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {

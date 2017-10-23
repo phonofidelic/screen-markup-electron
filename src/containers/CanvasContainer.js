@@ -63,6 +63,10 @@ class CanvasContainer extends Component {
 											 className="tool"
 											 title="Undo" />
 				</div>
+				{/*<div style={{color: '#000', position: 'fixed'}}>
+									img
+									<img src="screenshot.png" style={{width: '100%', height: '100%'}} />
+								</div>*/}
 			</div>
 		);
 	}
