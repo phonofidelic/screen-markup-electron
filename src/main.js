@@ -1,6 +1,8 @@
 const electron = require('electron');
 // Module to control application life.
 const app = electron.app;
+const {dialog, clipboard} = require('electron');
+
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 const { Menu, MenuItem, globalShortcut } = require('electron');
@@ -9,6 +11,7 @@ const screenshot = require('desktop-screenshot');
 
 const path = require('path');
 const url = require('url');
+const fs = require('fs');
 
 const startUrl = process.env.ELECTRON_START_URL || url.format({
   pathname: path.join(__dirname, '/../build/index.html'),
@@ -20,6 +23,10 @@ const startUrl = process.env.ELECTRON_START_URL || url.format({
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+// Keep track of devTools toggle state
+// TODO: move to wherever we are keeping track of state (model)
+let devToolsOpen = false;
+
 const captureScreen = () => {
   console.log('*capture screen*');
   screenshot(path.join(__dirname, '/../build/screenshot.png'), function(error, complete) {
@@ -30,14 +37,48 @@ const captureScreen = () => {
   });
 }
 
-function createWindow() {
+const saveImg = () => {
+  console.log('Save!')
+  // TODO: get reference edited image in main window
+  const img = 'placeholder';
+
+  dialog.showSaveDialog(fileName => {
+    console.log('fileName:', fileName)
+    // TODO: add prefix to filename before saving.
+    // Add a way for the user to set this prefix in 
+    // a settings UI.
+    fs.writeFile(`${fileName}.txt`, img, err => {
+      if (err) {
+        throw err;
+      }
+      console.log('Image was saved!');
+    });
+  });
+}
+
+const toggleDevTools = () => {
+  // Open the DevTools.
+  if (!devToolsOpen) { 
+    mainWindow.webContents.openDevTools();
+    devToolsOpen = true;
+  } else {
+    mainWindow.webContents.closeDevTools();
+    devToolsOpen = false;
+  }
+}
+
+const createWindow = () => {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
+
+  // TODO: Get width and height of captured image and pass to BrowserWindow
+  // The image may not always be the full screen, if support for capturing 
+  // specified windows or marked out rectangles is added.
+  const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
+  mainWindow = new BrowserWindow({width: width, height: height});
 
   mainWindow.loadURL(startUrl);
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -46,39 +87,58 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null
   });
-
-  const menuTemplate = [
-    {
-      label: 'Electron',
-      submenu: [
-        {
-            label: 'Capture screen',
-            accelerator: 'CmdOrCtrl+Alt+P',
-            click: () => {captureScreen()}
-        },
-        {
-            role: 'quit'
-        }
-      ]
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },   
-        { role: 'redo' }
-      ]
-    }
-  ];
-
-  const menu = Menu.buildFromTemplate(menuTemplate);
-  Menu.setApplicationMenu(menu);
 }
 
+const menuTemplate = [
+  {
+    label: 'Electron',
+    submenu: [
+      {
+          label: 'Capture screen',
+          accelerator: 'CmdOrCtrl+Alt+P',
+          click: () => { captureScreen(); }
+      },
+      {
+          role: 'quit'
+      }
+    ]
+  },
+  {
+    label: 'File',
+    submenu: [
+      { 
+        label: 'Save',
+        accelerator: 'CmdOrCtrl+S',
+        click: () => { saveImg(); }
+      }
+    ]
+  },
+  {
+    label: 'Edit',
+    submenu: [
+      { role: 'undo' },   
+      { role: 'redo' }
+    ]
+  },
+  {
+    label: 'View',
+    submenu: [
+      {
+        label: 'Show Developer Clonsole',
+        accelerator: 'CmdOrCtrl+Alt+I',
+        click: () => { toggleDevTools(); }
+      }
+    ]
+  }
+];
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+
   const reg = globalShortcut.register('CmdOrCtrl+Alt+P', () => {
     if (!reg) {
       console.log('global shortcut registration failed');
@@ -94,7 +154,7 @@ app.on('ready', () => {
 
 
 app.on('will-quit', () => {
-  globalShortCut.unregister('CmdOrCtrl+Alt+P');
+  globalShortcut.unregister('CmdOrCtrl+Alt+P');
 });
 
 // Quit when all windows are closed.
