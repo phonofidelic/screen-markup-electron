@@ -1,14 +1,17 @@
 class Canvas {
 	constructor() {
 		// this.shapes = [];
-		this.canvas = document.getElementById('canvas');
+		// this.canvas = document.getElementById('canvas');
+		this.canvas = document.createElement('canvas');
 		this.ctx = this.canvas.getContext('2d');
 		this.canvas.width = window.innerWidth;
 		this.canvas.height = window.innerHeight;
 		// this.ctx.save();
 
 		// Add screenshot to canvas
+		// BUG: does not work outside of React
 		this.screenshot = new Image();
+		console.log('this.screenshot', this.screenshot)
 
 		this.screenshot.addEventListener('load', e => {
 			console.log('image loaded', this.screenshot)

@@ -11,7 +11,7 @@ const tryConnection = () => client.connect({port: port}, () => {
 	if(!startedElectron) {
 		console.log('starting electron');
 		startedElectron = true;
-		const exec = erquire('child_process').exec;
+		const exec = require('child_process').exec;
 		exec('npm run wlwctron');
 	}
 });

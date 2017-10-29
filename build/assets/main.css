@@ -1,0 +1,29 @@
+.canvas-container {
+  /*background: #6c6d69;*/
+  background: #fff;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  color: #fff;
+}
+
+.tools-container {
+  position: fixed;
+  right: 0;
+  max-width: 28px;
+  height: 100vh;
+  background: #272822;
+}
+
+.tool {
+  margin-top: 5px;
+  padding: 5px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.tool:hover {
+  background: #515151;
+}

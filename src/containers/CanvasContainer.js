@@ -4,20 +4,15 @@ import * as actions from '../actions';
 import Canvas from '../lib/canvas';
 import FontAwesome from 'react-fontawesome';
 
-const draw = (newState) => {
-	console.log('* draw')
-	const canvas = document.getElementById('canvas');
-	let ctx = canvas.getContext('2d');
+// import {ipcRenderer} from 'electron';
 
-	// Clear canvas before drawing new state
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+// Check that we are in an electron environment
+if (window.require) {
+	const ipcRenderer = window.require('electron').ipcRenderer;
+	console.log('ipcRenderer', ipcRenderer)
 
-	console.log('* newState', newState)
-	newState.forEach(shape => {
-		console.log('shape:', shape)
-		ctx.strokeStyle = shape.color;
-		return ctx.strokeRect(shape.x, shape.y, shape.width, shape.height)
-	});
+	var canvasBuffer = window.require('electron-canvas-to-buffer');
+	var fs = window.require('fs');
 }
 
 class CanvasContainer extends Component {
@@ -29,27 +24,29 @@ class CanvasContainer extends Component {
 
 	componentDidMount() {
 		// Initiate canvas
-		// var canvas = document.getElementById('canvas');
-		// var ctx = canvas.getContext('2d');
-		// ctx.canvas.width = window.innerWidth;
-		// ctx.canvas.height = window.innerHeight;
+		// const canvas = new Canvas();
+		// console.log('canvas:', canvas);
 
-		const canvas = new Canvas();
-		console.log('canvas:', canvas)
+		// document.querySelector('#undo').addEventListener('click', e => {
+		// 	canvas.undo();
+		// });
 
-		document.querySelector('#undo').addEventListener('click', e => {
-			canvas.undo();
-		})
+		// document.querySelector('#save').addEventListener('click', e => {
+		// 	if (window.require) {
+		// 		const ipcRenderer = window.require('electron').ipcRenderer;
+		// 		ipcRenderer.send('save-img', canvas)
+		// 	}
+		// })
 	}
 
-
-
-	// componentDidUpdate() {
-	// 	const {canvas} = this.props;
-	// 	console.log('@ canvas componrntDidUpdate, canvas:', canvas)
-
-	// 	draw(canvas.canvasShapes);
-	// }
+	saveImg() {
+		const canvas = document.querySelector('#canvas');
+		// console.log('canvas from saveImg', canvas); // <-- canvas html element
+		if (window.require) {
+			const ipcRenderer = window.require('electron').ipcRenderer;
+			ipcRenderer.send('save-img', canvas)
+		}
+	}
 
 	render() {
 		return (
@@ -62,11 +59,13 @@ class CanvasContainer extends Component {
 											 id="undo"
 											 className="tool"
 											 title="Undo" />
+
+					<FontAwesome name='floppy-o'
+											 id="save"
+											 className="tool"
+											 title="Save image"
+											 onClick={this.saveImg} />											 
 				</div>
-				{/*<div style={{color: '#000', position: 'fixed'}}>
-									img
-									<img src="screenshot.png" style={{width: '100%', height: '100%'}} />
-								</div>*/}
 			</div>
 		);
 	}
