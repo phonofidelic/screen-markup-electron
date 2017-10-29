@@ -4,15 +4,29 @@ import * as actions from '../actions';
 import Canvas from '../lib/canvas';
 import FontAwesome from 'react-fontawesome';
 
-// import {ipcRenderer} from 'electron';
-
 // Check that we are in an electron environment
 if (window.require) {
-	const ipcRenderer = window.require('electron').ipcRenderer;
-	console.log('ipcRenderer', ipcRenderer)
+	const canvasBuffer = window.require('electron-canvas-to-buffer');
+	const fs = window.require('fs');
+}
 
-	var canvasBuffer = window.require('electron-canvas-to-buffer');
-	var fs = window.require('fs');
+// Utility function to save edited canvas image to file
+const saveCanvas = (canvasEl, filePath) => {
+	if (window.require) {
+		const fs = window.require('fs');
+		const canvasBuffer = window.require('electron-canvas-to-buffer');
+
+		console.log('canvas from saveCanvas', canvasEl)
+		const buffer = canvasBuffer(canvasEl, 'image/png'); // Throws error: canvs.toDataURL is undefined
+
+		fs.writeFile(`${filePath}.png`, buffer, err => {
+			if (err) {
+				throw err;
+			} else {
+				console.log(`Write of ${filePath} was successful`);
+			}
+		});
+	}
 }
 
 class CanvasContainer extends Component {
@@ -24,35 +38,33 @@ class CanvasContainer extends Component {
 
 	componentDidMount() {
 		// Initiate canvas
-		// const canvas = new Canvas();
-		// console.log('canvas:', canvas);
-
+		const canvas = new Canvas();
+		
 		// document.querySelector('#undo').addEventListener('click', e => {
 		// 	canvas.undo();
 		// });
 
-		// document.querySelector('#save').addEventListener('click', e => {
-		// 	if (window.require) {
-		// 		const ipcRenderer = window.require('electron').ipcRenderer;
-		// 		ipcRenderer.send('save-img', canvas)
-		// 	}
-		// })
-	}
+		console.log('canvas.screenshot from componentDidMount', canvas.screenshot)
 
-	saveImg() {
-		const canvas = document.querySelector('#canvas');
-		// console.log('canvas from saveImg', canvas); // <-- canvas html element
-		if (window.require) {
-			const ipcRenderer = window.require('electron').ipcRenderer;
-			ipcRenderer.send('save-img', canvas)
-		}
+		document.querySelector('#save').addEventListener('click', e => {
+			if (window.require) {
+				const fs = window.require('fs');
+				const canvasBuffer = window.require('electron-canvas-to-buffer');
+				const {dialog} = window.require('electron').remote;
+
+				dialog.showSaveDialog(filePath => {
+					saveCanvas(canvas.canvas, filePath)
+				});
+			}
+		});
 	}
 
 	render() {
 		return (
 			<div>
 				<div className="canvas-container">
-					<canvas id="canvas" />				
+					<canvas id="canvas" />
+					<img src="screenshot.png" />		
 				</div>
 				<div className="tools-container">
 					<FontAwesome name='undo'
@@ -64,7 +76,7 @@ class CanvasContainer extends Component {
 											 id="save"
 											 className="tool"
 											 title="Save image"
-											 onClick={this.saveImg} />											 
+											 onClick={this.saveCanvas} />											 
 				</div>
 			</div>
 		);

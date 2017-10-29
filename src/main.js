@@ -31,7 +31,7 @@ let devToolsOpen = false;
 
 const captureScreen = () => {
   console.log('*capture screen*');
-  screenshot(path.join(__dirname, '/../build/screenshot.png'), function(error, complete) {
+  screenshot(path.join(__dirname, '/../public/screenshot.png'), function(error, complete) {
     if(error)
       console.log("Screenshot failed", error);
     else
