@@ -64,7 +64,6 @@ class CanvasContainer extends Component {
 			<div>
 				<div className="canvas-container">
 					<canvas id="canvas" />
-					<img src="screenshot.png" />		
 				</div>
 				<div className="tools-container">
 					<FontAwesome name='undo'

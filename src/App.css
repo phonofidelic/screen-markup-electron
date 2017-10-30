@@ -5,7 +5,7 @@
 .canvas-container {
   /*background: #6c6d69;*/
   background: #fff;
-  position: fixed;
+  /*position: fixed;*/
   left: 0;
   top: 0;
   width: 100vw;
@@ -16,9 +16,11 @@
 .tools-container {
   position: fixed;
   right: 0;
+  top: 0;
   max-width: 28px;
   height: 100vh;
   background: #272822;
+  z-index: 1001;
 }
 
 .tool {

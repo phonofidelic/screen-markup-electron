@@ -1,11 +1,13 @@
+const W_OUTER_WIDTH = window.outerWidth;
+const W_OUTER_HEIGHT = window.outerHeight + 100;
 class Canvas {
 	constructor() {
 		this.shapes = [];
 		this.canvas = document.getElementById('canvas');
 		// this.canvas = document.createElement('canvas');
 		this.ctx = this.canvas.getContext('2d');
-		this.canvas.width = window.innerWidth;
-		this.canvas.height = window.innerHeight;
+		this.canvas.width = W_OUTER_WIDTH;
+		this.canvas.height = W_OUTER_HEIGHT;
 		// this.ctx.save();
 
 		// Add screenshot to canvas
@@ -15,7 +17,7 @@ class Canvas {
 
 		this.screenshot.addEventListener('load', e => {
 			console.log('image loaded', this.screenshot)
-			this.ctx.drawImage(this.screenshot, 0, 0, window.innerWidth, window.innerHeight);
+			this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
 		}, false);
 
 		this.screenshot.src = 'screenshot.png';
@@ -53,10 +55,12 @@ class Canvas {
 				// Create new shape outside of current canvas context
 				const ctx = this.canvas.getContext('2d'); 
 				ctx.strokeStyle = "#ccc";
+				ctx.lineWidth = 3;
+				ctx.setLineDash([4, 2]);
 
-				ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+				ctx.clearRect(0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
 				// Draw screenshot again
-				this.ctx.drawImage(this.screenshot, 0, 0, window.innerWidth, window.innerHeight);
+				this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
 
 				ctx.strokeRect(
 					this.sel.x,
@@ -74,6 +78,7 @@ class Canvas {
 			shape.height = e.clientY - shape.y;
 
 			this.ctx.strokeStyle = shape.color;
+			this.ctx.setLineDash([0, 0]);
 			this.ctx.strokeRect(
 				shape.x,
 				shape.y,
@@ -96,7 +101,7 @@ class Canvas {
 		}
 		// TODO: find a better way to remove last draw
 		// this.ctx.clearRect(this.shape.x -1, this.shape.y -1, this.shape.width +2, this.shape.height +2);
-		this.ctx.drawImage(this.screenshot, 0, 0, window.innerWidth, window.innerHeight);
+		this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
 		// Reset last draw
 		this.shape = null;
 	};
