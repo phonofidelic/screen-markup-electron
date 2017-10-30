@@ -19,7 +19,8 @@ ReactDOM.render(
 	</Provider>, document.getElementById('root'));
 registerServiceWorker();
 
-// Try creating app outside of React
+
+// TODO: Move to new project, same app but without React
 // if (window.require) {
 
 // 	const canvasBuffer = window.require('electron-canvas-to-buffer');

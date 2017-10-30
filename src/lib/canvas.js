@@ -1,6 +1,6 @@
 class Canvas {
 	constructor() {
-		// this.shapes = [];
+		this.shapes = [];
 		this.canvas = document.getElementById('canvas');
 		// this.canvas = document.createElement('canvas');
 		this.ctx = this.canvas.getContext('2d');
@@ -28,16 +28,42 @@ class Canvas {
 			height: null,
 			color: '#f22a2a'	// TODO: make dynamic
 		}
+
+		this.sel = {
+			x: null,
+			y: null,
+			width: null,
+			height: null,
+			color: '#ccc'			
+		}
 		
 		this.canvas.addEventListener('mousedown', e => {
 			console.log('mousedown canvas')
+			mouseIsPressed = true;
 			shape.x = e.clientX;
 			shape.y = e.clientY;
+
+			this.sel.x = e.clientX;
+			this.sel.y = e.clientY;
 		});
 
 		this.canvas.addEventListener('mousemove', (e) => {
 			if (mouseIsPressed) {
 				console.log('mousemove canvas', e)
+				// Create new shape outside of current canvas context
+				const ctx = this.canvas.getContext('2d'); 
+				ctx.strokeStyle = "#ccc";
+
+				ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+				// Draw screenshot again
+				this.ctx.drawImage(this.screenshot, 0, 0, window.innerWidth, window.innerHeight);
+
+				ctx.strokeRect(
+					this.sel.x,
+					this.sel.y,
+					e.clientX - this.sel.x,
+					e.clientY - this.sel.y
+				);
 			}
 		});
 
