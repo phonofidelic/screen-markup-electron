@@ -1,7 +1,11 @@
+import Shape from './shape';
+console.log('Shape', Shape)
+
 const W_OUTER_WIDTH = window.outerWidth;
 const W_OUTER_HEIGHT = window.outerHeight + 100;
 class Canvas {
 	constructor() {
+		// A list to store data for shapes drawn in the canvas
 		this.shapes = [];
 		this.canvas = document.getElementById('canvas');
 		// this.canvas = document.createElement('canvas');
@@ -11,16 +15,12 @@ class Canvas {
 		// this.ctx.save();
 
 		// Add screenshot to canvas
-		// BUG: does not work outside of React
 		this.screenshot = new Image();
-		console.log('this.screenshot', this.screenshot)
-
+		this.screenshot.src = 'screenshot.png';
 		this.screenshot.addEventListener('load', e => {
 			console.log('image loaded', this.screenshot)
 			this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
 		}, false);
-
-		this.screenshot.src = 'screenshot.png';
 
 		let mouseIsPressed = false;
 		let shape = {
@@ -44,6 +44,7 @@ class Canvas {
 			mouseIsPressed = true;
 			shape.x = e.clientX;
 			shape.y = e.clientY;
+			// shape = new Shape(e.clientX, e.clientY, false, false);
 
 			this.sel.x = e.clientX;
 			this.sel.y = e.clientY;
@@ -58,9 +59,19 @@ class Canvas {
 				ctx.lineWidth = 3;
 				ctx.setLineDash([4, 2]);
 
-				ctx.clearRect(0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
+				// ctx.clearRect(0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
 				// Draw screenshot again
 				this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
+				// TODO: draw all shapes in shape list
+				this.shapes.forEach(shape => {
+					console.log('* shape', shape)
+					this.ctx.strokeRect(
+						shape.x,
+						shape.y,
+						shape.width,
+						shape.height
+					);
+				});
 
 				ctx.strokeRect(
 					this.sel.x,
@@ -87,10 +98,21 @@ class Canvas {
 			);
 
 			this.shape = shape
+			// console.log('shape', this.shape)
 
-			console.log('shape', this.shape)
-			// this.shapes.push(shape);
-			// console.log('canvas shapes:', this.shapes)
+			this.shapes.push(new Shape(shape));
+			console.log('canvas shapes:', this.shapes)
+
+			// Draw all shapes in shapes list
+			this.shapes.forEach(shape => {
+				console.log('* shape', shape)
+				this.ctx.strokeRect(
+					shape.x,
+					shape.y,
+					shape.width,
+					shape.height
+				);
+			});
 		});
 	};
 
@@ -102,6 +124,8 @@ class Canvas {
 		// TODO: find a better way to remove last draw
 		// this.ctx.clearRect(this.shape.x -1, this.shape.y -1, this.shape.width +2, this.shape.height +2);
 		this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
+		// TODO: Draw all shapes in this.shapes
+
 		// Reset last draw
 		this.shape = null;
 	};

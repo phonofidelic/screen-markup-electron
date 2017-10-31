@@ -40,9 +40,9 @@ class CanvasContainer extends Component {
 		// Initiate canvas
 		const canvas = new Canvas();
 		
-		// document.querySelector('#undo').addEventListener('click', e => {
-		// 	canvas.undo();
-		// });
+		document.querySelector('#undo').addEventListener('click', e => {
+			canvas.undo();
+		});
 
 		console.log('canvas.screenshot from componentDidMount', canvas.screenshot)
 

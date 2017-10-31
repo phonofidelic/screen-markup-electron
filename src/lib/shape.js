@@ -3,11 +3,11 @@ sources:
 https://simonsarris.com/making-html5-canvas-useful/
 */
 class Shape {
-	constructor(x, y, width, height) {
-		this.x = x || 0;
-		this.y = y || 0;
-		this.width = width || 1;
-		this.height = height || 1;
+	constructor(options) {
+		this.x = options.x || 0;
+		this.y = options.y || 0;
+		this.width = options.width || 1;
+		this.height = options.height || 1;
 	}
 
 	draw(ctx) {
