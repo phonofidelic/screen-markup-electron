@@ -118,13 +118,33 @@ class Canvas {
 
 	undo() {
 		console.log('canvas undo', this.shape);
-		if (!this.shape) {
+		if (!this.shapes.length) {
 			return console.error('Nothing to undo');
 		}
 		// TODO: find a better way to remove last draw
 		// this.ctx.clearRect(this.shape.x -1, this.shape.y -1, this.shape.width +2, this.shape.height +2);
 		this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
-		// TODO: Draw all shapes in this.shapes
+		// // TODO: Draw all shapes -1 in this.shapes
+		// for (var i = 0; i < this.shapes.length -1; i++) {
+		// 	this.ctx.strokeRect(
+		// 		this.shapes[i].x,
+		// 		this.shapes[i].y,
+		// 		this.shapes[i].width,
+		// 		this.shapes[i].height
+		// 	)
+		// }
+
+		this.shapes.pop();
+
+		this.shapes.forEach(shape => {
+			console.log('* shape', shape)
+			this.ctx.strokeRect(
+				shape.x,
+				shape.y,
+				shape.width,
+				shape.height
+			);
+		});		
 
 		// Reset last draw
 		this.shape = null;
