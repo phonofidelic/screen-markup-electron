@@ -1,4 +1,4 @@
-##App usage:
+## App usage:
 The application is intended for quickly grabbing and annotating a screen image.
 After initializing, the app runs in the background. To grab an screen image, use
 `Cmd+Alt+P` and the current screen will show up in the app window. Currently, the
@@ -8,22 +8,22 @@ There are two buttons in the right menu bar: "undo" and "save".
 Currently working on more editing tools and UI design. Check back soon for updates!
 
 
-##Installation:
+## Installation:
 ```
 git clone https://github.com/phonofidelic/screen-markup-electron.git 
 cd screen-markup-electron
 npm install
 ```
 
-##Running local development environment:
+## Running local development environment:
 `npm run dev` to run create-react-app scripts and webpack dev server.
 `npm run electron` to run electron app.
 
-##Packaging as an iOS app:
+## Packaging as an iOS app:
 `npm run dist`
 The packaged app will be available as a file named ScreenMarkup in dist/mac
 
-##Guides and discussions used in development:
+## Guides and discussions used in development:
 HTML Canvas as a javascript class:
 https://simonsarris.com/making-html5-canvas-useful/
 
