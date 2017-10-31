@@ -40,7 +40,7 @@ class Canvas {
 		}
 		
 		this.canvas.addEventListener('mousedown', e => {
-			console.log('mousedown canvas')
+			console.log('mousedown canvas', e)
 			mouseIsPressed = true;
 			shape.x = e.clientX;
 			shape.y = e.clientY;
