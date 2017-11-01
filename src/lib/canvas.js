@@ -1,5 +1,4 @@
-import Shape from './shape';
-console.log('Shape', Shape)
+import Shape from './Shape';
 
 const W_OUTER_WIDTH = window.outerWidth;
 const W_OUTER_HEIGHT = window.outerHeight + 100;
