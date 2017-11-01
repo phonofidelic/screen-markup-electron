@@ -18,11 +18,12 @@ class Canvas {
 		this.screenshot = new Image();
 		this.screenshot.src = 'screenshot.png';
 		this.screenshot.addEventListener('load', e => {
-			console.log('image loaded', this.screenshot)
 			this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
 		}, false);
 
 		let mouseIsPressed = false;
+
+		// Holds date to be passed to the Shape constructor
 		let shape = {
 			x: null,
 			y: null,
@@ -31,54 +32,49 @@ class Canvas {
 			color: '#f22a2a'	// TODO: make dynamic
 		}
 
-		this.sel = {
+		// Stores data for selection rectangle. Selection rectangle is not 
+		// intended to be permanently rendered to the canvas so ther is no
+		// need to pass this data to a constructor; it is overwritten on 
+		// each mousedown event.
+		let selectionData = {
 			x: null,
 			y: null,
 			width: null,
 			height: null,
 			color: '#ccc'			
 		}
+		let sel = new Shape(selectionData);
 		
 		this.canvas.addEventListener('mousedown', e => {
 			console.log('mousedown canvas', e)
 			mouseIsPressed = true;
 			shape.x = e.clientX;
 			shape.y = e.clientY;
-			// shape = new Shape(e.clientX, e.clientY, false, false);
 
-			this.sel.x = e.clientX;
-			this.sel.y = e.clientY;
+			sel.x = e.clientX;
+			sel.y = e.clientY;
 		});
 
 		this.canvas.addEventListener('mousemove', (e) => {
 			if (mouseIsPressed) {
 				console.log('mousemove canvas', e)
-				// Create new shape outside of current canvas context
-				const ctx = this.canvas.getContext('2d'); 
-				ctx.strokeStyle = "#ccc";
-				ctx.lineWidth = 3;
-				ctx.setLineDash([4, 2]);
 
-				// ctx.clearRect(0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
+				sel.width = e.clientX - sel.x;
+				sel.height = e.clientY - sel.y;
+				sel.strokeStyle = '#ccc';
+
+				this.ctx.strokeStyle = sel.color;
+				this.ctx.lineWidth = 3;
+				this.ctx.setLineDash([4, 2]);
+
 				// Draw screenshot again
 				this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
-				// TODO: draw all shapes in shape list
+				// Draw all shapes in shape list
 				this.shapes.forEach(shape => {
-					console.log('* shape', shape)
-					this.ctx.strokeRect(
-						shape.x,
-						shape.y,
-						shape.width,
-						shape.height
-					);
+					shape.draw(this.ctx);
 				});
 
-				ctx.strokeRect(
-					this.sel.x,
-					this.sel.y,
-					e.clientX - this.sel.x,
-					e.clientY - this.sel.y
-				);
+				sel.draw(this.ctx)
 			}
 		});
 
@@ -90,64 +86,31 @@ class Canvas {
 
 			this.ctx.strokeStyle = shape.color;
 			this.ctx.setLineDash([0, 0]);
-			this.ctx.strokeRect(
-				shape.x,
-				shape.y,
-				shape.width,
-				shape.height
-			);
 
-			this.shape = shape
-			// console.log('shape', this.shape)
-
+			// Add new shape to shapes list
 			this.shapes.push(new Shape(shape));
-			console.log('canvas shapes:', this.shapes)
 
+			// Draw screenshot again
+			this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
 			// Draw all shapes in shapes list
 			this.shapes.forEach(shape => {
-				console.log('* shape', shape)
-				this.ctx.strokeRect(
-					shape.x,
-					shape.y,
-					shape.width,
-					shape.height
-				);
+				shape.draw(this.ctx);
 			});
 		});
 	};
 
 	undo() {
-		console.log('canvas undo', this.shape);
 		if (!this.shapes.length) {
 			return console.error('Nothing to undo');
 		}
-		// TODO: find a better way to remove last draw
-		// this.ctx.clearRect(this.shape.x -1, this.shape.y -1, this.shape.width +2, this.shape.height +2);
+		
 		this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
-		// // TODO: Draw all shapes -1 in this.shapes
-		// for (var i = 0; i < this.shapes.length -1; i++) {
-		// 	this.ctx.strokeRect(
-		// 		this.shapes[i].x,
-		// 		this.shapes[i].y,
-		// 		this.shapes[i].width,
-		// 		this.shapes[i].height
-		// 	)
-		// }
 
 		this.shapes.pop();
 
 		this.shapes.forEach(shape => {
-			console.log('* shape', shape)
-			this.ctx.strokeRect(
-				shape.x,
-				shape.y,
-				shape.width,
-				shape.height
-			);
-		});		
-
-		// Reset last draw
-		this.shape = null;
+			shape.draw(this.ctx);
+		});
 	};
 };
 

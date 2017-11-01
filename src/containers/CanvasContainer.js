@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import Canvas from '../lib/canvas';
+import Canvas from '../lib/Canvas';
 import FontAwesome from 'react-fontawesome';
 
 // Check that we are in an electron environment
