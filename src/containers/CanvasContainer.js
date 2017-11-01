@@ -4,14 +4,10 @@ import * as actions from '../actions';
 import Canvas from '../lib/Canvas';
 import FontAwesome from 'react-fontawesome';
 
-// Check that we are in an electron environment
-if (window.require) {
-	const canvasBuffer = window.require('electron-canvas-to-buffer');
-	const fs = window.require('fs');
-}
-
 // Utility function to save edited canvas image to file
+// TODO: move to redux action?
 const saveCanvas = (canvasEl, filePath) => {
+	// Check that we are in an electron environment
 	if (window.require) {
 		const fs = window.require('fs');
 		const canvasBuffer = window.require('electron-canvas-to-buffer');
@@ -47,15 +43,7 @@ class CanvasContainer extends Component {
 		console.log('canvas.screenshot from componentDidMount', canvas.screenshot)
 
 		document.querySelector('#save').addEventListener('click', e => {
-			if (window.require) {
-				const fs = window.require('fs');
-				const canvasBuffer = window.require('electron-canvas-to-buffer');
-				const {dialog} = window.require('electron').remote;
-
-				dialog.showSaveDialog(filePath => {
-					saveCanvas(canvas.canvas, filePath)
-				});
-			}
+			canvas.save();
 		});
 	}
 

@@ -39,38 +39,21 @@ const captureScreen = () => {
   });
 }
 
-const saveImg = (canvas) => {
-  console.log('Save!')
-  // Send save message to render process
-
-  // TODO: get reference edited image in main window
-  const img = 'placeholder';
-
-  // dialog.showSaveDialog(fileName => {
-  //   // TODO: add prefix to filename before saving.
-  //   // Add a way for the user to set this prefix in 
-  //   // a settings UI.
-  //   fs.writeFile(`${fileName}.txt`, img, err => {
-  //     if (err) {
-  //       throw err;
-  //     }
-  //     console.log(`Image ${fileName} was saved!`);
-  //   });
-  // });
-  dialog.showSaveDialog(saveCanvas(canvas));
+const saveImg = () => {
+  console.log('save from main')
 }
 
-const saveCanvas = canvas => {
-  const buffer = canvasBuffer(canvas, 'image/png');
+// const saveCanvas = canvas => {
+//   const buffer = canvasBuffer(canvas, 'image/png');
 
-  fs.writeFile('canva-buffer-img.png', buffer, err => {
-    if (err) {
-      throw err;
-    } else {
-      console.log('Write of',filePath,'was successful')
-    }
-  });
-}
+//   fs.writeFile('canva-buffer-img.png', buffer, err => {
+//     if (err) {
+//       throw err;
+//     } else {
+//       console.log('Write of',filePath,'was successful')
+//     }
+//   });
+// }
 
 const toggleDevTools = () => {
   // Open the DevTools.
@@ -111,12 +94,12 @@ const createWindow = () => {
   });
 }
 
-ipcMain.on('save-img', (evt, canvas) => {
-  console.log('ipcMain save-img', canvas)
+// ipcMain.on('save-img', (evt, canvas) => {
+//   console.log('ipcMain save-img', canvas)
 
-  // saveCanvas(canvas);
-  saveImg(canvas);
-})
+//   // saveCanvas(canvas);
+//   saveImg(canvas);
+// })
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

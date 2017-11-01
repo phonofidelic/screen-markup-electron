@@ -100,7 +100,7 @@ class Canvas {
 
 	undo() {
 		if (!this.shapes.length) {
-			return console.error('Nothing to undo');
+			return console.log('Nothing to undo');
 		}
 		
 		this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
@@ -111,6 +111,26 @@ class Canvas {
 			shape.draw(this.ctx);
 		});
 	};
+
+	save() {
+		if (window.require) {
+			const { dialog } = window.require('electron').remote;
+			const fs = window.require('fs');
+			const canvasBuffer = window.require('electron-canvas-to-buffer');
+
+			dialog.showSaveDialog(filePath => {
+				const buffer = canvasBuffer(this.canvas, 'image/png');
+
+				fs.writeFile(`${filePath}.png`, buffer, err => {
+					if (err) {
+						throw err;
+					} else {
+						console.log(`Write of ${filePath} was successful`);
+					}
+				});
+			});
+		}
+	}
 };
 
 export default Canvas;
