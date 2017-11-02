@@ -98,6 +98,16 @@ class Canvas {
 		});
 	};
 
+	init() {
+		document.querySelector('#undo').addEventListener('click', e => {
+			this.undo();
+		});
+
+		document.querySelector('#save').addEventListener('click', e => {
+			this.save();
+		});
+	}
+
 	undo() {
 		if (!this.shapes.length) {
 			return console.log('Nothing to undo');
