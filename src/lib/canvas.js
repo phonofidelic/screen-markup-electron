@@ -2,10 +2,47 @@ import Shape from './Shape';
 
 const W_OUTER_WIDTH = window.outerWidth;
 const W_OUTER_HEIGHT = window.outerHeight + 100;
+
+// Helpers
+const setSelectedTool = (tools, selectedTool) => {
+	Object.keys(tools).forEach(tool => {
+		console.log('tool:', tool)
+		if (selectedTool === tool) {
+			console.log('selected tool:', tools[tool])
+			tools[tool] = true;
+		}
+	})
+}
+
 class Canvas {
 	constructor() {
 		// A list to store data for shapes drawn in the canvas
 		this.shapes = [];
+		// this.tools = [
+		// 	{rect: false},
+		// 	{pencil: false},
+		// 	{text: false},
+		// 	{eraser: false},
+		// 	{crop: false}
+		// ]
+		this.tools = {
+			rect: false,
+			pencil: false,
+			text: false,
+			eraser: false,
+			crop: false
+		}
+		
+	};
+
+	init() {
+		// console.log('canvas.tools', this.tools["rect"])
+		// Object.keys(this.tools).forEach(tool => {
+		// 	console.log('tool:', tool)
+		// })
+
+		
+
 		this.canvas = document.getElementById('canvas');
 		// this.canvas = document.createElement('canvas');
 		this.ctx = this.canvas.getContext('2d');
@@ -19,6 +56,47 @@ class Canvas {
 		this.screenshot.addEventListener('load', e => {
 			this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
 		}, false);
+
+		// Activate rectangle tool by default
+		this.selectRect();
+	}
+
+	undo() {
+		if (!this.shapes.length) {
+			return console.log('Nothing to undo');
+		}
+		
+		this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
+
+		this.shapes.pop();
+
+		this.shapes.forEach(shape => {
+			shape.draw(this.ctx);
+		});
+	};
+
+	save() {
+		if (window.require) {
+			const { dialog } = window.require('electron').remote;
+			const fs = window.require('fs');
+			const canvasBuffer = window.require('electron-canvas-to-buffer');
+
+			dialog.showSaveDialog(filePath => {
+				const buffer = canvasBuffer(this.canvas, 'image/png');
+
+				fs.writeFile(`${filePath}.png`, buffer, err => {
+					if (err) {
+						throw err;
+					} else {
+						console.log(`Write of ${filePath} was successful`);
+					}
+				});
+			});
+		}
+	}
+
+	selectRect() {
+		setSelectedTool(this.tools, 'rect');
 
 		let mouseIsPressed = false;
 
@@ -92,59 +170,24 @@ class Canvas {
 				shape.draw(this.ctx);
 			});
 		});
-	};
-
-	init() {
-		document.querySelector('#undo').addEventListener('click', e => {
-			this.undo();
-		});
-
-		document.querySelector('#save').addEventListener('click', e => {
-			this.save();
-		});
 	}
 
-	undo() {
-		if (!this.shapes.length) {
-			return console.log('Nothing to undo');
-		}
-		
-		this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
-
-		this.shapes.pop();
-
-		this.shapes.forEach(shape => {
-			shape.draw(this.ctx);
-		});
-	};
-
-	save() {
-		if (window.require) {
-			const { dialog } = window.require('electron').remote;
-			const fs = window.require('fs');
-			const canvasBuffer = window.require('electron-canvas-to-buffer');
-
-			dialog.showSaveDialog(filePath => {
-				const buffer = canvasBuffer(this.canvas, 'image/png');
-
-				fs.writeFile(`${filePath}.png`, buffer, err => {
-					if (err) {
-						throw err;
-					} else {
-						console.log(`Write of ${filePath} was successful`);
-					}
-				});
-			});
-		}
+	selectText() {
+		// TODO: implement text tool
 	}
 
-	saveTest() {
-		if (window.require) {
-			const { ipcRenderer } = window.require('electron');
+	selectEraser() {
+		// TODO: implement eraser tool	
+	}
 
-			ipcRenderer.send('save-test', this.canvas);
-		}
-	}	
+	selectPencil() {
+		// TODO: implement pencil tool	
+	}
+
+	selectCrop() {
+		// TODO: implement crop tool	
+	}
+
 };
 
 export default Canvas;

@@ -1,4 +1,4 @@
-import { INIT_CANVAS, SET_COLOR, SELECT_SQUARE } from '../actiontypes';
+import { INIT_CANVAS, SET_COLOR, SELECT_TOOL } from '../actiontypes';
 
 const INITIAL_STATE = {
 	selectedColor: '#f22a2a',
@@ -23,26 +23,20 @@ const INITIAL_STATE = {
 
 const toolsReducer = (state = INITIAL_STATE, action) => {
 	switch(action.type) {
-		// case INIT_CANVAS:
-		// 	return {
-		// 		...state,
-		// 		canvas: action.canvas
-		// 	}
+
 
 		case SET_COLOR:
 			return {
 				...state,
 			}
 
-		case SELECT_SQUARE: 
+		case SELECT_TOOL: 
 			return {
 				...state,
-				crop: { isSelected: false },
-				pencil: { isSelected: false },
-				eraser: { isSelected: false },
-				text: { isSelected: false },
-				square: {isSelected: true}
+				selectedTool: action.payload
 			}
+
+
 
 		default: return state;
 	}

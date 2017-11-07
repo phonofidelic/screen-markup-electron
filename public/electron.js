@@ -39,12 +39,6 @@ const captureScreen = () => {
   });
 }
 
-// Send message to remote to save image
-const saveImg = () => {
-  console.log('save from main')
-  mainWindow.webContents.send('save-img');
-}
-
 const toggleDevTools = () => {
   // Initiate devtron tab in devtools
   require('devtron').install();
@@ -146,14 +140,18 @@ const menuTemplate = [
       { 
         label: 'Save',
         accelerator: 'CmdOrCtrl+S',
-        click: () => { saveImg() }
+        click: () => { mainWindow.webContents.send('save-img'); }
       }
     ]
   },
   {
     label: 'Edit',
     submenu: [
-      { role: 'undo' },   
+      { 
+        label: 'Undo',
+        accelerator: 'CmdOrCtrl+Z',
+        click: () => { mainWindow.webContents.send('undo'); }
+      },   
       { role: 'redo' }
     ]
   },

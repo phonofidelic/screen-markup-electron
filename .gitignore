@@ -1,6 +1,7 @@
 node_modules
 build
 public/screenshot.png
+*.png
 .DS_Store
 dist/
 npm-debug.log

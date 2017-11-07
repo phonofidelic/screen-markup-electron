@@ -1,82 +1,16 @@
-import { INIT_CANVAS, SET_COLOR, SELECT_SQUARE, ADD_SHAPE, DRAW_SHAPE, UNDO_LAST_DRAW } from '../actiontypes';
+import { INIT_CANVAS, SET_COLOR, SELECT_TOOL, ADD_SHAPE, DRAW_SHAPE, UNDO_LAST_DRAW } from '../actiontypes';
 
 
 
-export const selectSquare = (canvas, selectedColor) => {
-	console.log('@action SELECT_SQUARE');
-
-	var canvas = document.getElementById('canvas');
-	var ctx = canvas.getContext('2d');
-
-	let rect = {
-		x: null,
-		y: null,
-		width: null,
-		height: null,
-		color: selectedColor
-	};
-
-	let mouseIsPressed = false;
-
-	return dispatch => {
-		canvas.addEventListener('mousedown', (e) => {
-			console.log('* mousedown canvas', e)
-			mouseIsPressed = true;
-			rect.x = e.clientX;
-			rect.y = e.clientY;
-		});
-
-		canvas.addEventListener('mousemove', (e) => {
-			if (mouseIsPressed) {
-				// console.log('* mousemove canvas', e)
-				// ctx.moveTo(e.clientX, e.clientY)
-			}
-		});		
-
-		canvas.addEventListener('mouseup', (e) => {
-			console.log('* mouseup canvas')
-			mouseIsPressed = false;
-			rect.width = e.clientX - rect.x;
-			rect.height = e.clientY - rect.y;
-
-			_drawSquare(ctx, rect, selectedColor);
-			// console.log('* rect:', rect)
-
-			// Push new canvas state to the canvasStates array in reducer
-			dispatch({
-				type: ADD_SHAPE,
-				lastDraw: rect
-			});
-		});
-	}
-
-
+export const selectSquare = (tool) => {
+	
 	return dispatch => {
 		dispatch({
-			type: SELECT_SQUARE
+			type: SELECT_TOOL,
+			payload: tool
 		});
 	}
 };
-
-// TODO: Make generic draw function that draws all stored shapes 
-// export const draw = (newState) => {
-// 	console.log('* draw')
-// 	const canvas = document.getElementById('canvas');
-// 	let ctx = canvas.getContext('2d');
-
-// 	// Clear canvas before drawing new state
-// 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-// 	newState.map(shape => {
-// 		ctx.strokeStyle = shape.color;
-// 		ctx.strokeRect(shape.x, shape.y, shape.width, shape.height)
-// 	});
-
-// 	return dispatch => {
-// 		dispatch({
-// 			type: DRAW_SHAPE
-// 		});
-// 	}
-// }
 
 export const _drawSquare = (ctx, rect, selectedColor) => {
 	ctx.strokeStyle = selectedColor;

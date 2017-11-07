@@ -20,23 +20,51 @@ class Tools extends Component {
 
 		return (
 		  <div className="tools-container">
-        <FontAwesome name='crop' className="tool" title="Crop image" />
+        <FontAwesome name='crop' 
+                     className="tool" 
+                     title="Crop image"
+                     style={tools.selectedTool === 'crop' ? {background: '#515151'} : null}
+                     onClick={() => {selectSquare('crop'); canvas.selectCrop()}} />
+
         <FontAwesome name='square' 
                      className="tool color-picker" 
                      title="Color" 
                      style={{color: tools.selectedColor}}/>
-        <FontAwesome name='pencil' className="tool" title="Draw" />
-        <FontAwesome name='eraser' className="tool" title="Erase" />
-        <FontAwesome name='font' className="tool" title="Text" />
+
+        <FontAwesome name='pencil' 
+                     className="tool" 
+                     title="Draw"
+                     style={tools.selectedTool === 'pencil' ? {background: '#515151'} : null}
+                     onClick={() => {selectSquare('pencil'); canvas.selectPencil()}} />
+
+        <FontAwesome name='eraser' 
+                     className="tool" 
+                     title="Erase"
+                     style={tools.selectedTool === 'eraser' ? {background: '#515151'} : null}
+                     onClick={() => {selectSquare('eraser'); canvas.selectEraser()}} />
+
+        <FontAwesome name='font' 
+                     className="tool" 
+                     title="Text"
+                     style={tools.selectedTool === 'text' ? {background: '#515151'} : null}
+                     onClick={() => {selectSquare('text'); canvas.selectText()}} />
+
         <FontAwesome name='square-o' 
                      className="tool" 
                      title="Box"
-                     style={tools.square.isSelected ? {background: '#515151'} : null}
-                     onClick={() => {selectSquare(canvas.canvasShapes[canvas.canvasShapes.length -1], tools.selectedColor)}} />
+                     style={tools.selectedTool === 'rect' ? {background: '#515151'} : null}
+                     onClick={() => {selectSquare('rect'); canvas.selectRect()}} />
+
         <FontAwesome name='undo' 
                      className="tool" 
                      title="Undo"
-                     onClick={() => {undo(canvas.canvasShapes)}} />
+                     onClick={() => { canvas.undo() }} />
+
+        <FontAwesome name='floppy-o'
+                     className="tool"
+                     title="Save image"
+                     onClick={() => { canvas.save() }} />
+
         <FontAwesome name='times' className="tool" title="Cancel" />
       </div>
 		);
@@ -46,7 +74,7 @@ class Tools extends Component {
 const mapStateToProps = state => {
   return {
     tools: state.toolsReducer,
-    canvas: state.canvasReducer
+    // canvas: state.canvasReducer
   }
 }
 

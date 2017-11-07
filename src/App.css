@@ -5,7 +5,7 @@
 .canvas-container {
   /*background: #6c6d69;*/
   background: #fff;
-  /*position: fixed;*/
+  position: fixed;
   left: 0;
   top: 0;
   width: 100vw;
@@ -35,5 +35,9 @@
 }
 
 .tool:hover {
+  background: #515151;
+}
+
+.tool-selected {
   background: #515151;
 }
