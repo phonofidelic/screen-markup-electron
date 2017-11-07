@@ -45,7 +45,6 @@ class Canvas {
 		let sel = new Shape(selectionData);
 		
 		this.canvas.addEventListener('mousedown', e => {
-			console.log('mousedown canvas', e)
 			mouseIsPressed = true;
 			shape.x = e.clientX;
 			shape.y = e.clientY;
@@ -56,8 +55,6 @@ class Canvas {
 
 		this.canvas.addEventListener('mousemove', (e) => {
 			if (mouseIsPressed) {
-				console.log('mousemove canvas', e)
-
 				sel.width = e.clientX - sel.x;
 				sel.height = e.clientY - sel.y;
 				sel.strokeStyle = '#ccc';
@@ -78,7 +75,6 @@ class Canvas {
 		});
 
 		this.canvas.addEventListener('mouseup', (e) => {
-			console.log('mouseup canvas', e)
 			mouseIsPressed = false;
 			shape.width = e.clientX - shape.x;
 			shape.height = e.clientY - shape.y;
@@ -141,6 +137,14 @@ class Canvas {
 			});
 		}
 	}
+
+	saveTest() {
+		if (window.require) {
+			const { ipcRenderer } = window.require('electron');
+
+			ipcRenderer.send('save-test', this.canvas);
+		}
+	}	
 };
 
 export default Canvas;

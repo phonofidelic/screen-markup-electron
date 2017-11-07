@@ -1,7 +1,7 @@
 const electron = require('electron');
 // Module to control application life.
 const app = electron.app;
-const {dialog, clipboard} = require('electron');
+const { dialog, clipboard } = require('electron');
 
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
@@ -39,23 +39,15 @@ const captureScreen = () => {
   });
 }
 
+// Send message to remote to save image
 const saveImg = () => {
   console.log('save from main')
+  mainWindow.webContents.send('save-img');
 }
 
-// const saveCanvas = canvas => {
-//   const buffer = canvasBuffer(canvas, 'image/png');
-
-//   fs.writeFile('canva-buffer-img.png', buffer, err => {
-//     if (err) {
-//       throw err;
-//     } else {
-//       console.log('Write of',filePath,'was successful')
-//     }
-//   });
-// }
-
 const toggleDevTools = () => {
+  // Initiate devtron tab in devtools
+  require('devtron').install();
   // Open the DevTools.
   if (!devToolsOpen) { 
     mainWindow.webContents.openDevTools();
@@ -78,13 +70,6 @@ const createWindow = () => {
   // mainWindow.loadURL(startUrl);
   mainWindow.loadURL('http://localhost:3000');
 
-
-  // TODO: Create some kind of stream to connect the browsers canvas image 
-  // to main electron process.
-
-  // *** documenr is not defined
-  // console.log('canvas element?', document.querySelector('#canvas'))
-
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
@@ -94,12 +79,9 @@ const createWindow = () => {
   });
 }
 
-// ipcMain.on('save-img', (evt, canvas) => {
-//   console.log('ipcMain save-img', canvas)
-
-//   // saveCanvas(canvas);
-//   saveImg(canvas);
-// })
+ipcMain.on('save-test', (evt, canvas) => {
+  console.log('ipcMain save-test', canvas)
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -164,7 +146,7 @@ const menuTemplate = [
       { 
         label: 'Save',
         accelerator: 'CmdOrCtrl+S',
-        click: () => { saveImg(); }
+        click: () => { saveImg() }
       }
     ]
   },

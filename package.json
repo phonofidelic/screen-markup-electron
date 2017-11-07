@@ -5,6 +5,7 @@
   "author": "phonofidelic",
   "homepage": "./",
   "devDependencies": {
+    "devtron": "^1.4.0",
     "electron": "^1.7.9",
     "electron-builder": "^19.43.0",
     "foreman": "^2.0.0",

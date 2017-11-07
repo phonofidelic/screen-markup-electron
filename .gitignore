@@ -1,5 +1,5 @@
 node_modules
-build/**/*
+build
 public/screenshot.png
 .DS_Store
 dist/

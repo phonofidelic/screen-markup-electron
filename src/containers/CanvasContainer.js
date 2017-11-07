@@ -15,6 +15,16 @@ class CanvasContainer extends Component {
 		// Initiate canvas
 		const canvas = new Canvas();
 		canvas.init();
+
+		if (window.require) {
+			const { ipcRenderer	} = window.require('electron');
+
+			// Listen for save message sent from keyboard shortcut in main process
+			ipcRenderer.on('save-img', () => {
+				console.log('save-img');
+				canvas.save();
+			})
+		}
 	}
 
 	render() {
