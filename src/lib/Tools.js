@@ -14,6 +14,17 @@ const drawShapes = (ctx, shapeList) => {
 	})
 }
 
+// const drawLine = (ctx, points) => {
+// 	// Move canvas drawing point to first point in the line shape
+// 	ctx.moveTo(points[0].x, points[0].y);
+// 	// Add a path between each point in the line shape,
+// 	// then draw the line
+// 	points.forEach(point => {
+// 		ctx.lineTo(point.x, point.y);
+// 	});
+// 	ctx.stroke();
+// }
+
 export class Rectangle {
 	constructor() {
 		this.type = 'rectangle';
@@ -86,20 +97,20 @@ export class Rectangle {
 	}
 }
 
+
+const DEFAULT_BRUSH_DATA = {
+	// TODO: Set shapeData from settings props
+	type: 'line',
+	strokeStyle: '#f22a2a',
+	lineWidth: 3,
+	lineDash: [0, 0],
+	points: []
+};
+
 export class Brush {
 	constructor() {
 		this.type = 'brush';
-
-		this.shapeData = {
-			// TODO: Set shapeData from settings props
-			type: 'line',
-			strokeStyle: '#f22a2a',
-			lineWidth: 3,
-			lineDash: [0, 0],
-			points: []
-		};
-
-		this.points = [];
+		this.shapeData = {...DEFAULT_BRUSH_DATA};
 	}
 
 	mouseDown(e, ctx, shapeList) {
@@ -107,26 +118,18 @@ export class Brush {
 
 		drawShapes(ctx, shapeList);
 
-		// shapeList.push(new Shape(this.shapeData))
-
 		this.shapeData.x = e.clientX;
 		this.shapeData.y = e.clientY;
 
-		this.beginLine = {x: this.shapeData.x, y: this.shapeData.y};
-		this.shapeData.points.push({x: e.clientX, y: e.clientY})
+		this.shape = new Shape(this.shapeData);
+		this.shape.points.push({x: e.clientX, y: e.clientY});
 
-		ctx.strokeStyle = this.shapeData.strokeStyle;
-		ctx.lineWidth = this.shapeData.lineWidth;
-		ctx.lineDash = this.shapeData.lineDash;
-
-		this.points.push(this.beginLine);
-		this.shapeData.points.push(this.beginLine);
+		ctx.strokeStyle = this.shape.strokeStyle;
+		ctx.lineWidth = this.shape.lineWidth;
+		ctx.lineDash = this.shape.lineDash;
 		
-		ctx.moveTo(this.beginLine.x, this.beginLine.y);
+		ctx.moveTo(this.shape.x, this.shape.y);
 		ctx.beginPath();
-		// ctx.stroke();
-
-
 	}
 
 	mouseMove(e, ctx, shapeList) {
@@ -135,36 +138,19 @@ export class Brush {
 		drawShapes(ctx, shapeList);
 
 		const newPoint = {x: e.clientX, y: e.clientY};
-		this.points.push(newPoint);
-		this.shapeData.points.push(newPoint);
+		this.shape.points.push(newPoint);
 
-		ctx.moveTo(this.points[0].x, this.points[0].y);	
-		ctx.lineTo(this.points[0].x, this.points[0].y);
-		for (var i = 1; i < this.points.length; i++) {
-			ctx.lineTo(this.points[i].x, this.points[i].y);
-			ctx.stroke();
-		}
-
-		// if (!this.shapeData.points.length) {
-			// ctx.stroke();
-		// }
-		
+		this.shape.drawLine(ctx);
 	}
 
 	mouseUp(e, ctx, shapeList) {
-		console.log('brush mouseUp, points', this.points);
+		console.log('brush mouseUp');
 		
-
-
-		// ctx.stroke();
-		// ctx.closePath()
-
-		console.log('brush mouseUp, shapeData', this.shapeData);
-		shapeList.push(new Shape(this.shapeData));
+		shapeList.push(this.shape);
 
 		drawShapes(ctx, shapeList);
 
-		this.points = [];
+		// Empty points array so it is ready to hold new values for next line shape
 		this.shapeData.points = [];
 
 		return shapeList;

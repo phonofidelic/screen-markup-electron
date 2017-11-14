@@ -35,21 +35,6 @@ class Canvas extends Component {
 		this.screenshot.addEventListener('load', e => {
 			this.ctx.drawImage(this.screenshot, 0, 0, this.canvas.width, this.canvas.height);
 		}, false);
-
-		// Empty objects to hold shap and selData data
-		this.shapeData = {
-			// TODO: Set shapeData from settings props
-			strokeStyle: '#f22a2a',
-			lineWidth: 3,
-			lineDash: [0, 0]
-		};
-		this.selData = {
-			strokeStyle: '#ccc',
-			lineWidth: 3,
-			lineDash: [4, 2]
-		};
-
-		// this.sel = new Shape(this.selData);
 	}
 
 	handleMouseDown(e) {
@@ -68,7 +53,6 @@ class Canvas extends Component {
 
 	handleMouseMove(e) {
 		if (this.mouseIsDown) {
-
 			// Draw screenshot again
 			this.ctx.drawImage(this.screenshot, 0, 0, this.canvas.width, this.canvas.height);
 
