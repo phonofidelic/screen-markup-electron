@@ -2,23 +2,7 @@ import { INIT_CANVAS, SET_COLOR, SELECT_TOOL } from '../actiontypes';
 
 const INITIAL_STATE = {
 	selectedColor: '#f22a2a',
-	selectedTool: null,
-	lastDraw: null,
-	crop: {
-		isSelected: false
-	},
-	pencil: {
-		isSelected: false
-	},
-	eraser: {
-		isSelected: false
-	},
-	text: {
-		isSelected: false
-	},
-	square: {
-		isSelected: false
-	}
+	selectedTool: 'no_tool',
 };
 
 const toolsReducer = (state = INITIAL_STATE, action) => {

@@ -125,13 +125,13 @@ const menuTemplate = [
     label: 'Electron',
     submenu: [
       {
-          label: 'Capture screen',
-          accelerator: 'CmdOrCtrl+Alt+P',
-          click: () => { captureScreen(); }
+        label: 'Capture screen',
+        accelerator: 'CmdOrCtrl+Alt+P',
+        click: () => { captureScreen(); }
       },
       {
-          role: 'quit'
-      }
+        role: 'quit'
+      },
     ]
   },
   {
@@ -162,6 +162,11 @@ const menuTemplate = [
         label: 'Show Developer Clonsole',
         accelerator: 'CmdOrCtrl+Alt+I',
         click: () => { toggleDevTools(); }
+      },
+      {
+        label: 'Reload',
+        accelerator: 'CmdOrCtrl+R',
+        click: () => { mainWindow.reload(); }
       }
     ]
   }

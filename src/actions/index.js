@@ -1,34 +1,61 @@
-import { INIT_CANVAS, SET_COLOR, SELECT_TOOL, ADD_SHAPE, DRAW_SHAPE, UNDO_LAST_DRAW } from '../actiontypes';
+import { 
+	INIT_CANVAS, 
+	SET_COLOR, 
+	SELECT_TOOL, 
+	ADD_SHAPE, 
+	DRAW_SHAPE, 
+	UNDO_LAST_DRAW 
+} from '../actiontypes';
+import {
+	RECTANGLE,
+	BRUSH,
+	TEXT,
+	ERASER,
+	CROP
+} from '../tooltypes';
+import { Rectangle, Brush, Text, Eraser, Crop } from '../lib/Tools';
 
-
-
-export const selectSquare = (tool) => {
-	
+export const selectRectangle = () => {
 	return dispatch => {
 		dispatch({
 			type: SELECT_TOOL,
-			payload: tool
+			payload: new Rectangle()
 		});
 	}
 };
 
-export const _drawSquare = (ctx, rect, selectedColor) => {
-	ctx.strokeStyle = selectedColor;
-	ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
-	ctx.save();
-
-	console.log('* drawSquare, ctx:', ctx)
-};
-
-export const undo = (canvasStates) => {
-	var canvas = document.getElementById('canvas');
-	var ctx = canvas.getContext('2d');
-	ctx.restore();
-	console.log('* undo, ctx', ctx);
-	// Pop last canvas state from the canvasStates array 
+export const selectBrush = () => {
 	return dispatch => {
 		dispatch({
-			type: UNDO_LAST_DRAW
-		})
+			type: SELECT_TOOL,
+			payload: new Brush()
+		});
 	}
-}
+};
+
+export const selectText = () => {
+	return dispatch => {
+		dispatch({
+			type: SELECT_TOOL,
+			payload: new Text()
+		});
+	}
+};
+
+export const selectEraser = () => {
+	return dispatch => {
+		dispatch({
+			type: SELECT_TOOL,
+			payload: new Eraser()
+		});
+	}
+};
+
+export const selectCrop = () => {
+	return dispatch => {
+		dispatch({
+			type: SELECT_TOOL,
+			payload: new Crop()
+		});
+	}
+};

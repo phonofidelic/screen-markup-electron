@@ -14,7 +14,7 @@ const setSelectedTool = (tools, selectedTool) => {
 	})
 }
 
-class Canvas {
+class CanvasClass {
 	constructor() {
 		// A list to store data for shapes drawn in the canvas
 		this.shapes = [];
@@ -190,4 +190,4 @@ class Canvas {
 
 };
 
-export default Canvas;
+export default CanvasClass;

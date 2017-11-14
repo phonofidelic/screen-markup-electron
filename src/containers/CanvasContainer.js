@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import Canvas from '../lib/Canvas';
+import CanvasClass from '../lib/Canvas';
 import FontAwesome from 'react-fontawesome';
+import Canvas from '../components/Canvas';
 import Tools from './Tools';
-
-var canvas;
 
 class CanvasContainer extends Component {
 	constructor(props) {
@@ -13,9 +12,7 @@ class CanvasContainer extends Component {
 
 		console.log('* CanvasContainer props', props)
 
-		// Initiate canvas
-		this.canvas = new Canvas();
-		// canvas.init();
+		this.canvas = new CanvasClass();
 
 		if (window.require) {
 			const { ipcRenderer	} = window.require('electron');
@@ -31,16 +28,19 @@ class CanvasContainer extends Component {
 	}
 
 	componentDidMount() {
-		// // Initiate canvas
+		// Initiate canvas
 		this.canvas.init();
 	}
 
 	render() {
 		console.log('*** canvas', this.canvas)
+		const { selectedTool } = this.props.tools;
 		return (
 			<div>
 				<div className="canvas-container">
-					<canvas id="canvas" />
+					<Canvas width={window.outerWidth} 
+									height={window.outerHeight}
+									tool={selectedTool} />
 				</div>
 				<div className="tools-container">
 					<Tools canvas={this.canvas}/>										 
@@ -52,7 +52,6 @@ class CanvasContainer extends Component {
 
 const mapStateToProps = state => {
   return {
-  	canvas: state.canvasReducer,
     tools: state.toolsReducer
   }
 }

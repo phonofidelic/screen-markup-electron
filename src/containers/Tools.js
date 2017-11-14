@@ -13,7 +13,11 @@ class Tools extends Component {
 	render() {
     const { 
       tools, 
-      selectSquare, 
+      selectRectangle,
+      selectBrush,
+      selectText,
+      selectEraser,
+      selectCrop,
       undo, 
       canvas 
     } = this.props;
@@ -23,8 +27,8 @@ class Tools extends Component {
         <FontAwesome name='crop' 
                      className="tool" 
                      title="Crop image"
-                     style={tools.selectedTool === 'crop' ? {background: '#515151'} : null}
-                     onClick={() => {selectSquare('crop'); canvas.selectCrop()}} />
+                     style={tools.selectedTool.type === 'crop' ? {background: '#515151'} : null}
+                     onClick={() => { selectCrop() }} />
 
         <FontAwesome name='square' 
                      className="tool color-picker" 
@@ -34,26 +38,26 @@ class Tools extends Component {
         <FontAwesome name='pencil' 
                      className="tool" 
                      title="Draw"
-                     style={tools.selectedTool === 'pencil' ? {background: '#515151'} : null}
-                     onClick={() => {selectSquare('pencil'); canvas.selectPencil()}} />
+                     style={tools.selectedTool.type === 'brush' ? {background: '#515151'} : null}
+                     onClick={() => { selectBrush() }} />
 
         <FontAwesome name='eraser' 
                      className="tool" 
                      title="Erase"
-                     style={tools.selectedTool === 'eraser' ? {background: '#515151'} : null}
-                     onClick={() => {selectSquare('eraser'); canvas.selectEraser()}} />
+                     style={tools.selectedTool.type === 'eraser' ? {background: '#515151'} : null}
+                     onClick={() => { selectEraser() }} />
 
         <FontAwesome name='font' 
                      className="tool" 
                      title="Text"
-                     style={tools.selectedTool === 'text' ? {background: '#515151'} : null}
-                     onClick={() => {selectSquare('text'); canvas.selectText()}} />
+                     style={tools.selectedTool.type === 'text' ? {background: '#515151'} : null}
+                     onClick={() => { selectText() }} />
 
         <FontAwesome name='square-o' 
                      className="tool" 
                      title="Box"
-                     style={tools.selectedTool === 'rect' ? {background: '#515151'} : null}
-                     onClick={() => {selectSquare('rect'); canvas.selectRect()}} />
+                     style={tools.selectedTool.type === 'rectangle' ? {background: '#515151'} : null}
+                     onClick={() => { selectRectangle() }} />
 
         <FontAwesome name='undo' 
                      className="tool" 
@@ -74,7 +78,6 @@ class Tools extends Component {
 const mapStateToProps = state => {
   return {
     tools: state.toolsReducer,
-    // canvas: state.canvasReducer
   }
 }
 
