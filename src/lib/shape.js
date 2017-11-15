@@ -33,7 +33,6 @@ class Shape {
 		ctx.strokeStyle = this.strokeStyle;
 
 		// Move canvas drawing point to first point in the line shape
-		console.log('### this.points', this.points)
 		ctx.moveTo(this.points[0].x, this.points[0].y);
 		// Add a path between each point in the line shape,
 		// then draw the line

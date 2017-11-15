@@ -14,17 +14,6 @@ const drawShapes = (ctx, shapeList) => {
 	})
 }
 
-// const drawLine = (ctx, points) => {
-// 	// Move canvas drawing point to first point in the line shape
-// 	ctx.moveTo(points[0].x, points[0].y);
-// 	// Add a path between each point in the line shape,
-// 	// then draw the line
-// 	points.forEach(point => {
-// 		ctx.lineTo(point.x, point.y);
-// 	});
-// 	ctx.stroke();
-// }
-
 export class Rectangle {
 	constructor() {
 		this.type = 'rectangle';
@@ -41,7 +30,6 @@ export class Rectangle {
 			lineWidth: 3,
 			lineDash: [4, 2]
 		};
-		
 	}
 
 	mouseDown(e, ctx, shapeList) {

@@ -24,16 +24,16 @@ class Tools extends Component {
 
 		return (
 		  <div className="tools-container">
-        <FontAwesome name='crop' 
-                     className="tool" 
-                     title="Crop image"
-                     style={tools.selectedTool.type === 'crop' ? {background: '#515151'} : null}
-                     onClick={() => { selectCrop() }} />
+        {/*<FontAwesome name='crop' 
+                             className="tool" 
+                             title="Crop image"
+                             style={tools.selectedTool.type === 'crop' ? {background: '#515151'} : null}
+                             onClick={() => { selectCrop() }} />*/}
 
-        <FontAwesome name='square' 
-                     className="tool color-picker" 
-                     title="Color" 
-                     style={{color: tools.selectedColor}}/>
+        {/*<FontAwesome name='square' 
+                             className="tool color-picker" 
+                             title="Color" 
+                             style={{color: tools.selectedColor}}/>*/}
 
         <FontAwesome name='pencil' 
                      className="tool" 
@@ -41,17 +41,17 @@ class Tools extends Component {
                      style={tools.selectedTool.type === 'brush' ? {background: '#515151'} : null}
                      onClick={() => { selectBrush() }} />
 
-        <FontAwesome name='eraser' 
-                     className="tool" 
-                     title="Erase"
-                     style={tools.selectedTool.type === 'eraser' ? {background: '#515151'} : null}
-                     onClick={() => { selectEraser() }} />
+        {/*<FontAwesome name='eraser' 
+                             className="tool" 
+                             title="Erase"
+                             style={tools.selectedTool.type === 'eraser' ? {background: '#515151'} : null}
+                             onClick={() => { selectEraser() }} />*/}
 
-        <FontAwesome name='font' 
-                     className="tool" 
-                     title="Text"
-                     style={tools.selectedTool.type === 'text' ? {background: '#515151'} : null}
-                     onClick={() => { selectText() }} />
+        {/*<FontAwesome name='font' 
+                             className="tool" 
+                             title="Text"
+                             style={tools.selectedTool.type === 'text' ? {background: '#515151'} : null}
+                             onClick={() => { selectText() }} />*/}
 
         <FontAwesome name='square-o' 
                      className="tool" 
@@ -69,7 +69,7 @@ class Tools extends Component {
                      title="Save image"
                      onClick={() => { canvas.save() }} />
 
-        <FontAwesome name='times' className="tool" title="Cancel" />
+        {/*<FontAwesome name='times' className="tool" title="Cancel" />*/}
       </div>
 		);
 	}
