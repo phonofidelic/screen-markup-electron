@@ -20,8 +20,6 @@ const toolsReducer = (state = INITIAL_STATE, action) => {
 				selectedTool: action.payload
 			}
 
-
-
 		default: return state;
 	}
 }

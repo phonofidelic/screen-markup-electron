@@ -6,13 +6,7 @@ import {
 	DRAW_SHAPE, 
 	UNDO_LAST_DRAW 
 } from '../actiontypes';
-import {
-	RECTANGLE,
-	BRUSH,
-	TEXT,
-	ERASER,
-	CROP
-} from '../tooltypes';
+
 import { Rectangle, Brush, Text, Eraser, Crop } from '../lib/Tools';
 
 export const selectRectangle = () => {

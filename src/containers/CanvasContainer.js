@@ -7,30 +7,6 @@ import Canvas from '../components/Canvas';
 import Tools from './Tools';
 
 class CanvasContainer extends Component {
-	constructor(props) {
-		super(props);
-
-		console.log('* CanvasContainer props', props)
-
-		this.canvas = new CanvasClass();
-
-		if (window.require) {
-			const { ipcRenderer	} = window.require('electron');
-
-			// Listen for save message sent from keyboard shortcut in main process
-			ipcRenderer.on('save-img', () => {
-				console.log('save-img');
-				this.canvas.save();
-			})
-
-			ipcRenderer.on('undo', () => { this.canvas.undo() });
-		}		
-	}
-
-	componentDidMount() {
-		// Initiate canvas
-		this.canvas.init();
-	}
 
 	render() {
 		console.log('*** canvas', this.canvas)
@@ -43,7 +19,7 @@ class CanvasContainer extends Component {
 									tool={selectedTool} />
 				</div>
 				<div className="tools-container">
-					<Tools canvas={this.canvas}/>										 
+					<Tools />										 
 				</div>
 			</div>
 		);

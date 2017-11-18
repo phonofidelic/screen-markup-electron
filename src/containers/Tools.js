@@ -10,6 +10,18 @@ class Tools extends Component {
     console.log('* Tools props', props)
   }
 
+  handleUndo() {
+    console.log('handleUndo')
+    if (window.require) {
+      const { ipcRenderer } = window.require('electron');
+      ipcRenderer.send('undo')
+    }
+  }
+
+  handleSave() {
+    console.log('handleSave')
+  }
+
 	render() {
     const { 
       tools, 
@@ -17,9 +29,7 @@ class Tools extends Component {
       selectBrush,
       selectText,
       selectEraser,
-      selectCrop,
-      undo, 
-      canvas 
+      selectCrop
     } = this.props;
 
 		return (
@@ -59,15 +69,6 @@ class Tools extends Component {
                      style={tools.selectedTool.type === 'rectangle' ? {background: '#515151'} : null}
                      onClick={() => { selectRectangle() }} />
 
-        <FontAwesome name='undo' 
-                     className="tool" 
-                     title="Undo"
-                     onClick={() => { canvas.undo() }} />
-
-        <FontAwesome name='floppy-o'
-                     className="tool"
-                     title="Save image"
-                     onClick={() => { canvas.save() }} />
 
         {/*<FontAwesome name='times' className="tool" title="Cancel" />*/}
       </div>

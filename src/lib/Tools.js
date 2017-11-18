@@ -78,7 +78,7 @@ export class Rectangle {
 		// Add new shape to temp shapeList
 		shapeList.push(new Shape(this.shapeData));
 
-		drawShapes(ctx, shapeList)
+		drawShapes(ctx, shapeList);
 
 		// Return temp shapeList to overwrite canvas shapeList
 		return shapeList;

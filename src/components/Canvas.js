@@ -35,6 +35,52 @@ class Canvas extends Component {
 		this.screenshot.addEventListener('load', e => {
 			this.ctx.drawImage(this.screenshot, 0, 0, this.canvas.width, this.canvas.height);
 		}, false);
+
+		if (window.require) {
+			const { ipcRenderer	} = window.require('electron');
+
+			// Listen for save message sent from keyboard shortcut in main process
+			ipcRenderer.on('save-img', () => {
+				console.log('save-img');
+				this.save();
+			})
+
+			ipcRenderer.on('undo', () => { this.undo() });
+		}	
+	}
+
+	undo() {
+		if (!this.shapeList.length) {
+			return console.log('Nothing to undo');
+		}
+		
+		this.ctx.drawImage(this.screenshot, 0, 0, this.canvas.width, this.canvas.height);
+
+		this.shapeList.pop();
+
+		this.shapeList.forEach(shape => {
+			shape.draw(this.ctx);
+		});
+	}
+
+	save() {
+		if (window.require) {
+			const { dialog } = window.require('electron').remote;
+			const fs = window.require('fs');
+			const canvasBuffer = window.require('electron-canvas-to-buffer');
+
+			dialog.showSaveDialog(filePath => {
+				const buffer = canvasBuffer(this.canvas, 'image/png');
+
+				fs.writeFile(`${filePath}.png`, buffer, err => {
+					if (err) {
+						throw err;
+					} else {
+						console.log(`Write of ${filePath} was successful`);
+					}
+				});
+			});
+		}
 	}
 
 	handleMouseDown(e) {
