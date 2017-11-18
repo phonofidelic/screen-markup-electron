@@ -65,9 +65,12 @@ class Canvas extends Component {
 
 	save() {
 		if (window.require) {
-			const { dialog } = window.require('electron').remote;
+			const remote = window.require('electron').remote;
+			const dialog = remote.dialog;
 			const fs = window.require('fs');
 			const canvasBuffer = window.require('electron-canvas-to-buffer');
+
+			const win = remote.getCurrentWindow();
 
 			dialog.showSaveDialog(filePath => {
 				const buffer = canvasBuffer(this.canvas, 'image/png');
@@ -77,6 +80,8 @@ class Canvas extends Component {
 						throw err;
 					} else {
 						console.log(`Write of ${filePath} was successful`);
+						// Close window after successful save
+						win.close();
 					}
 				});
 			});

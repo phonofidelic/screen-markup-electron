@@ -140,7 +140,9 @@ const menuTemplate = [
       { 
         label: 'Save',
         accelerator: 'CmdOrCtrl+S',
-        click: () => { mainWindow.webContents.send('save-img'); }
+        click: () => { 
+          mainWindow.webContents.send('save-img');
+        }
       }
     ]
   },
