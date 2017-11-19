@@ -159,8 +159,22 @@ const menuTemplate = [
         label: 'Undo',
         accelerator: 'CmdOrCtrl+Z',
         click: () => { mainWindow.webContents.send('undo'); }
-      },   
-      { role: 'redo' }
+      }
+    ]
+  },
+  {
+    label: 'Tools',
+    submenu: [
+      {
+        label: 'Rectangle',
+        accelerator: 'R',
+        click: () => { mainWindow.webContents.send('select-rectangle'); }
+      },
+      {
+        label: 'Brush',
+        accelerator: 'B',
+        click: () => { mainWindow.webContents.send('select-brush'); }
+      }
     ]
   },
   {

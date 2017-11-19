@@ -13,6 +13,18 @@ class Tools extends Component {
     this.props.selectRectangle();
   }
 
+  componentDidMount() {
+    const { selectRectangle, selectBrush } = this.props;
+    if (window.require) {
+      const { ipcRenderer } = window.require('electron');
+
+      // Listen for tool selection sent from keyboard shortcuts in main process
+      ipcRenderer.on('select-rectangle', () => { selectRectangle(); });
+      ipcRenderer.on('select-brush', () => { selectBrush(); });
+
+    } 
+  }
+
   handleUndo() {
     console.log('handleUndo')
     if (window.require) {
@@ -50,13 +62,13 @@ class Tools extends Component {
 
         <FontAwesome name='square-o' 
                      className="tool" 
-                     title="Box"
+                     title="Rectangle [R]"
                      style={tools.selectedTool.type === 'rectangle' ? {background: '#515151'} : null}
                      onClick={() => { selectRectangle() }} />
 
         <FontAwesome name='pencil' 
                      className="tool" 
-                     title="Draw"
+                     title="Brush [B]"
                      style={tools.selectedTool.type === 'brush' ? {background: '#515151'} : null}
                      onClick={() => { selectBrush() }} />
 
