@@ -32,21 +32,24 @@ class Canvas extends Component {
 		// Load and render captured screen image
 		this.screenshot = new Image();
 		this.screenshot.src = 'screenshot.png';
+		console.log('## screenshot', this.screenshot)
 		this.screenshot.addEventListener('load', e => {
-			this.ctx.drawImage(this.screenshot, 0, 0, this.canvas.width, this.canvas.height);
+			// this.ctx.drawImage(this.screenshot, 0, 0);
+			this.drawScreenshot(this.ctx, this.screenshot);
 		}, false);
 
 		if (window.require) {
 			const { ipcRenderer	} = window.require('electron');
 
 			// Listen for save message sent from keyboard shortcut in main process
-			ipcRenderer.on('save-img', () => {
-				console.log('save-img');
-				this.save();
-			})
+			ipcRenderer.on('save-img', () => { this.save(); });
 
-			ipcRenderer.on('undo', () => { this.undo() });
+			ipcRenderer.on('undo', () => { this.undo(); });
 		}	
+	}
+
+	drawScreenshot(ctx, screenshot) {
+		ctx.drawImage(screenshot, 0, 0);
 	}
 
 	undo() {
@@ -54,7 +57,7 @@ class Canvas extends Component {
 			return console.log('Nothing to undo');
 		}
 		
-		this.ctx.drawImage(this.screenshot, 0, 0, this.canvas.width, this.canvas.height);
+		this.drawScreenshot(this.ctx, this.screenshot);
 
 		this.shapeList.pop();
 
@@ -94,7 +97,7 @@ class Canvas extends Component {
 		this.mouseIsDown = true;
 
 		// Draw screenshot again
-		this.ctx.drawImage(this.screenshot, 0, 0, this.canvas.width, this.canvas.height);
+		this.drawScreenshot(this.ctx, this.screenshot);
 
 		if (!this.props.tool.mouseDown) {
 			return console.log('no Rectangle mouseDown')
@@ -105,7 +108,7 @@ class Canvas extends Component {
 	handleMouseMove(e) {
 		if (this.mouseIsDown) {
 			// Draw screenshot again
-			this.ctx.drawImage(this.screenshot, 0, 0, this.canvas.width, this.canvas.height);
+			this.drawScreenshot(this.ctx, this.screenshot);
 
 			if (!this.props.tool.mouseMove) {
 				return console.log('no Rectangle mouseMove')
@@ -119,7 +122,7 @@ class Canvas extends Component {
 		this.mouseIsDown = false;
 
 		// Draw screenshot again
-		this.ctx.drawImage(this.screenshot, 0, 0, this.canvas.width, this.canvas.height);
+		this.drawScreenshot(this.ctx, this.screenshot);
 
 		if(!this.props.tool.mouseUp) {
 			return console.log('no tool mouseUp')

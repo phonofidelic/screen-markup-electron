@@ -13,13 +13,14 @@ class CanvasContainer extends Component {
 		const { selectedTool } = this.props.tools;
 		return (
 			<div>
+				<div className="tools-container">
+					<Tools />										 
+				</div>
+
 				<div className="canvas-container">
 					<Canvas width={window.outerWidth} 
 									height={window.outerHeight}
 									tool={selectedTool} />
-				</div>
-				<div className="tools-container">
-					<Tools />										 
 				</div>
 			</div>
 		);

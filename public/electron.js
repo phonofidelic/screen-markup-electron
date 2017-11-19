@@ -29,9 +29,9 @@ let mainWindow;
 // TODO: move to wherever we are keeping track of state (model)
 let devToolsOpen = false;
 
-const captureScreen = () => {
+const captureScreen = (winSize) => {
   console.log('*capture screen*');
-  screenshot(path.join(__dirname, '/../public/screenshot.png'), function(error, complete) {
+  screenshot(path.join(__dirname, '/../public/screenshot.png'), {width: winSize.width, height: winSize.height}, function(error, complete) {
     if(error)
       console.log("Screenshot failed", error);
     else
@@ -58,8 +58,12 @@ const createWindow = () => {
   // TODO: Get width and height of captured image and pass to BrowserWindow
   // The image may not always be the full screen, if support for capturing 
   // specified windows or marked out rectangles is added.
-  const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
-  mainWindow = new BrowserWindow({width: width, height: height});
+  const {width, height} = electron.screen.getPrimaryDisplay().size;
+  mainWindow = new BrowserWindow({
+    width: width, 
+    height: height, 
+    titleBarStyle: 'hidden'
+  });
 
   // mainWindow.loadURL(startUrl);
   mainWindow.loadURL('http://localhost:3000');
@@ -84,6 +88,8 @@ app.on('ready', () => {
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
 
+  const SCREEN_SIZE = electron.screen.getPrimaryDisplay().size;
+
   const reg = globalShortcut.register('CmdOrCtrl+Alt+P', () => {
     if (!reg) {
       console.log('global shortcut registration failed');
@@ -91,7 +97,7 @@ app.on('ready', () => {
     console.log('global screenshot')
     // TODO: Create promise to wait untill captureScreen has saved
     //       the new screenshot before calling createWindow().
-    captureScreen();
+    captureScreen(SCREEN_SIZE);
     createWindow();
   });
 });
@@ -127,7 +133,7 @@ const menuTemplate = [
       {
         label: 'Capture screen',
         accelerator: 'CmdOrCtrl+Alt+P',
-        click: () => { captureScreen(); }
+        click: () => { captureScreen(SCREEN_SIZE); }
       },
       {
         role: 'quit'

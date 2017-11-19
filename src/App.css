@@ -7,10 +7,11 @@
   background: #fff;
   position: fixed;
   left: 0;
-  top: 0;
+  /*top: 40px;*/
   width: 100vw;
   height: 100vh;
   color: #fff;
+  /*z-index: 1002;*/
 }
 
 #canvas {
@@ -19,18 +20,29 @@
 
 .tools-container {
   position: fixed;
-  right: 0;
-  top: 0;
-  max-width: 28px;
-  height: 100vh;
+  /*right: 0;*/
+  /*top: 0;*/
+  text-align: right;
+  margin-right: 5px;
+  /*max-width: 28px;*/
+  /*height: 100vh;*/
+  height: 22px;
+  width: 100%;
   background: #272822;
+  /*background: #cfcdcf;*/
   z-index: 1001;
 }
 
 .tool {
-  margin-top: 5px;
-  padding: 5px;
-  border-radius: 4px;
+  background: #272822;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  margin-right: 3px;
+  /*padding: 5px;*/
+  text-align: center;
+  line-height: 20px;
+  border-radius: 100%;
   color: #fff;
 }
 
@@ -40,4 +52,8 @@
 
 .tool-selected {
   background: #515151;
+}
+
+.tool-icon {
+
 }

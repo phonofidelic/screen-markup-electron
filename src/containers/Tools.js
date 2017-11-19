@@ -8,6 +8,9 @@ class Tools extends Component {
     super(props);
 
     console.log('* Tools props', props)
+
+    // Default tool selection
+    this.props.selectRectangle();
   }
 
   handleUndo() {
@@ -45,6 +48,12 @@ class Tools extends Component {
                              title="Color" 
                              style={{color: tools.selectedColor}}/>*/}
 
+        <FontAwesome name='square-o' 
+                     className="tool" 
+                     title="Box"
+                     style={tools.selectedTool.type === 'rectangle' ? {background: '#515151'} : null}
+                     onClick={() => { selectRectangle() }} />
+
         <FontAwesome name='pencil' 
                      className="tool" 
                      title="Draw"
@@ -63,11 +72,7 @@ class Tools extends Component {
                              style={tools.selectedTool.type === 'text' ? {background: '#515151'} : null}
                              onClick={() => { selectText() }} />*/}
 
-        <FontAwesome name='square-o' 
-                     className="tool" 
-                     title="Box"
-                     style={tools.selectedTool.type === 'rectangle' ? {background: '#515151'} : null}
-                     onClick={() => { selectRectangle() }} />
+        
 
 
         {/*<FontAwesome name='times' className="tool" title="Cancel" />*/}
