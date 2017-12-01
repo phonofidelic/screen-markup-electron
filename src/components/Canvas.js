@@ -30,14 +30,29 @@ class Canvas extends Component {
 		this.ctx = this.canvas.getContext('2d');
 
 		// Load and render captured screen image
-		this.screenshot = new Image();
-		this.screenshot.src = 'screenshot.png';
-		console.log('## screenshot', this.screenshot)
-		this.screenshot.addEventListener('load', e => {
-			// this.ctx.drawImage(this.screenshot, 0, 0);
-			this.drawScreenshot(this.ctx, this.screenshot);
-		}, false);
+		if (window.require) {
+			const { remote } = window.require('electron');
 
+			// BUG: In dist, imageBuffer returns undefined
+			const imageBuffer = remote.getGlobal('imageBuffer');
+			console.log('imageBuffer', imageBuffer);
+
+			const u8array = new Uint8Array(remote.getGlobal('imageBuffer'));
+			console.log('u8array', u8array);
+
+			const blob = new Blob([ imageBuffer ], { type: "image/png" });
+			const url = URL.createObjectURL(blob);
+
+			this.screenshot = new Image();
+			this.screenshot.src = url;
+
+			this.screenshot.addEventListener('load', () => {
+				console.log('IMAGE LOADED')
+				this.drawScreenshot(this.ctx, this.screenshot);
+			});
+		}
+
+		
 		if (window.require) {
 			const { ipcRenderer	} = window.require('electron');
 
@@ -45,11 +60,21 @@ class Canvas extends Component {
 			ipcRenderer.on('save-img', () => { this.save(); });
 
 			ipcRenderer.on('undo', () => { this.undo(); });
+
+			// Listen for logger messages
+			ipcRenderer.on('logger', (e, logs) => {
+				console.log('### Logger messages ###', logs);
+				logs.forEach(log => {
+					console.log(log.description, log.value)
+				})
+			})
+
+			ipcRenderer.send('window-loaded', 'hello');
 		}	
 	}
 
 	drawScreenshot(ctx, screenshot) {
-		ctx.drawImage(screenshot, 0, 0);
+		ctx.drawImage(screenshot, 0, 0, window.screen.width, window.screen.height);
 	}
 
 	undo() {
@@ -83,6 +108,9 @@ class Canvas extends Component {
 						throw err;
 					} else {
 						console.log(`Write of ${filePath} was successful`);
+
+						// BUG: Window closes when cancel button is clicked.
+						// 			Should only close window on save button click.
 						// Close window after successful save
 						win.close();
 					}
@@ -98,6 +126,7 @@ class Canvas extends Component {
 
 		// Draw screenshot again
 		this.drawScreenshot(this.ctx, this.screenshot);
+		console.log('mousedoun, this.screenshot', this.screenshot)
 
 		if (!this.props.tool.mouseDown) {
 			return console.log('no Rectangle mouseDown')

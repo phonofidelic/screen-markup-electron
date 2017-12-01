@@ -9,14 +9,36 @@ const BrowserWindow = electron.BrowserWindow;
 const { Menu, MenuItem, globalShortcut, ipcMain } = require('electron');
 
 const screenshot = require('desktop-screenshot');
+const screenshotBuffer = require('screenshot-desktop');
 
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const canvasBuffer = require('electron-canvas-to-buffer');
 
+// Logger stores console messegas and sends them to render process 
+// once browser window has been created
+class Logger {
+  constructor() {
+    this.messages = [];
+  }
+
+  sendLogs(win) {
+    win.webContents.send('logger', this.messages);
+    console.log('logs sent, logger.messages', this.messages)
+  }
+}
+
+const logger = new Logger();
+
 const startUrl = process.env.ELECTRON_START_URL || url.format({
   pathname: path.join(__dirname, '/../build/index.html'),
+  protocol: 'file:',
+  slashes: true
+});
+
+const screenshotUrl = process.env.SCREENSHOT_URL || url.format({
+  pathname: path.join(__dirname, '/assets/screenshot.png'),
   protocol: 'file',
   slashes: true
 });
@@ -29,19 +51,31 @@ let mainWindow;
 // TODO: move to wherever we are keeping track of state (model)
 let devToolsOpen = false;
 
-const captureScreen = (winSize) => {
-  console.log('*capture screen*');
-  screenshot(path.join(__dirname, '/../public/screenshot.png'), {width: winSize.width, height: winSize.height}, function(error, complete) {
-    if(error)
-      console.log("Screenshot failed", error);
-    else
-      console.log("Screenshot succeeded");
+// const captureScreen = (winSize) => {
+//   console.log('*capture screen*');
+//   screenshot(path.join(__dirname, '/../public/screenshot.png'), {width: winSize.width, height: winSize.height}, function(error, complete) {
+//     if(error)
+//       console.log("Screenshot failed", error);
+//     else
+//       console.log("Screenshot succeeded");
+//   });
+// }
+
+const screenCapBuffer = () => {
+  screenshotBuffer().then(buffer => {
+    // Make image buffer available to render process throug global var
+    console.log('screenCapBuffer, buffer', buffer);
+    global.imageBuffer = buffer;
+    // Create browser window ater buffer is available in global var
+    createWindow(); 
+  }).catch(err => {
+    console.error('screenCapBuffer error:', err);
   });
 }
 
 const toggleDevTools = () => {
   // Initiate devtron tab in devtools
-  require('devtron').install();
+  // require('devtron').install();
   // Open the DevTools.
   if (!devToolsOpen) { 
     mainWindow.webContents.openDevTools();
@@ -65,8 +99,8 @@ const createWindow = () => {
     titleBarStyle: 'hidden'
   });
 
-  // mainWindow.loadURL(startUrl);
-  mainWindow.loadURL('http://localhost:3000');
+  mainWindow.loadURL(startUrl);
+  // mainWindow.loadURL('http://localhost:3000');  
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -77,9 +111,11 @@ const createWindow = () => {
   });
 }
 
-ipcMain.on('save-test', (evt, canvas) => {
-  console.log('ipcMain save-test', canvas)
-})
+ipcMain.on('window-loaded', (e) => {
+  console.log('window loaded')
+  // Send loggs to render process
+  logger.sendLogs(mainWindow);  
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -90,14 +126,31 @@ app.on('ready', () => {
 
   const SCREEN_SIZE = electron.screen.getPrimaryDisplay().size;
 
+  // Register global keyboard shortcut for screen capture
   const reg = globalShortcut.register('CmdOrCtrl+Alt+P', () => {
     if (!reg) {
       console.log('global shortcut registration failed');
+      logger.messages.push({description: 'global shortcut registration failed', value: '(no value)'});
     }
     console.log('global screenshot')
-    // TODO: Create promise to wait untill captureScreen has saved
-    //       the new screenshot before calling createWindow().
-    captureScreen(SCREEN_SIZE);
+    logger.messages.push({description: 'global screenshot', value: '(no value)'});
+
+    // captureScreen(SCREEN_SIZE);
+
+    // screenCapBuffer();
+    screenshotBuffer().then(buffer => {
+      // Make image buffer available to render process throug global var
+      console.log('screenCapBuffer, buffer', buffer);
+      logger.messages.push({description: 'screenCapBuffer, buffer', value: buffer});
+
+      global.imageBuffer = buffer;
+      // Create browser window ater buffer is available in global var
+      // createWindow(); 
+    }).catch(err => {
+      console.error('screenCapBuffer error:', err);
+      logger.messages.push({description: 'screenCapBuffer error:', value: err})
+    });
+
     createWindow();
   });
 });
@@ -133,7 +186,7 @@ const menuTemplate = [
       {
         label: 'Capture screen',
         accelerator: 'CmdOrCtrl+Alt+P',
-        click: () => { captureScreen(SCREEN_SIZE); }
+        click: () => { screenCapBuffer(); }
       },
       {
         role: 'quit'

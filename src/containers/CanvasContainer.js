@@ -9,7 +9,6 @@ import Tools from './Tools';
 class CanvasContainer extends Component {
 
 	render() {
-		console.log('*** canvas', this.canvas)
 		const { selectedTool } = this.props.tools;
 		return (
 			<div>
