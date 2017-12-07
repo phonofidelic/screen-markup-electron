@@ -14,6 +14,9 @@ const screenshotBuffer = require('screenshot-desktop');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
+const exec = require('child_process').exec;
+const temp = require('temp').track();
+
 const canvasBuffer = require('electron-canvas-to-buffer');
 
 // Logger stores console messegas and sends them to render process 
@@ -23,13 +26,56 @@ class Logger {
     this.messages = [];
   }
 
+  log(description, value) {
+    this.messages.push({description: description, value: value});
+  }
+
   sendLogs(win) {
-    win.webContents.send('logger', this.messages);
-    console.log('logs sent, logger.messages', this.messages)
+    win.webContents.send('logger-messages', this.messages);
   }
 }
+const browserLogger = new Logger();
 
-const logger = new Logger();
+// Create new Winston logger instance
+const logger = require('./utils/logger');
+
+const APP_DATA_PATH = app.getAppPath('appData');
+logger.info('APP_DATA_PATH:', APP_DATA_PATH);
+browserLogger.log('APP_DATA_PATH:', APP_DATA_PATH);
+
+const darwinSnapshot = () => {
+  return new Promise((resolve, reject) => {
+    var tmpPath = temp.path({ suffix: '.png' });
+    // var tmpPath = path.join(APP_DATA_PATH, '/ScreenMarkup/tempImg.png');
+    logger.debug('darwinSnapshot, tmpPath:', tmpPath);
+    browserLogger.log('darwinSnapshot, tmpPath:', tmpPath);
+
+    exec('screencapture -x -t png ' + tmpPath, function (err, stdOut) {
+      if (err) {
+        browserLogger.log('darwinSnapshot, exec error:', err);
+        return reject(err)
+      } else {
+        fs.readFile(tmpPath, function (err, img) {
+          if (err) {
+            browserLogger.messages.push({description: 'darwinSnapshot error at fs.readFile:', value: err})
+            return reject(err)
+          } else {
+            logger.debug('darwinSnapshot resolve, img:', img);
+            browserLogger.log('darwinSnapshot resolve, img:', img);
+            resolve(img);
+          }
+          // TODO: move unlink to after user is done with image?
+          fs.unlink(tmpPath, function (err) {
+            if (err) {
+              browserLogger.messages.push({description: 'darwinSnapshot error at fs.unlink:', value: err})
+              return reject(err)
+            }
+          })
+        })
+      }
+    })
+  })
+}
 
 const startUrl = process.env.ELECTRON_START_URL || url.format({
   pathname: path.join(__dirname, '/../build/index.html'),
@@ -75,7 +121,7 @@ const screenCapBuffer = () => {
 
 const toggleDevTools = () => {
   // Initiate devtron tab in devtools
-  // require('devtron').install();
+  require('devtron').install();
   // Open the DevTools.
   if (!devToolsOpen) { 
     mainWindow.webContents.openDevTools();
@@ -97,7 +143,11 @@ const createWindow = () => {
     width: width, 
     height: height, 
     titleBarStyle: 'hidden'
+    // show: false
   });
+
+  browserLogger.log('startUrl', startUrl);
+  logger.info('winston: startUrl', startUrl);
 
   mainWindow.loadURL(startUrl);
   // mainWindow.loadURL('http://localhost:3000');  
@@ -112,9 +162,11 @@ const createWindow = () => {
 }
 
 ipcMain.on('window-loaded', (e) => {
-  console.log('window loaded')
+  logger.info('window loaded')
+  // Show window after screenshot is loaded
+  // mainWindow.show();
   // Send loggs to render process
-  logger.sendLogs(mainWindow);  
+  browserLogger.sendLogs(mainWindow);  
 });
 
 // This method will be called when Electron has finished
@@ -124,31 +176,31 @@ app.on('ready', () => {
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
 
-  const SCREEN_SIZE = electron.screen.getPrimaryDisplay().size;
-
   // Register global keyboard shortcut for screen capture
   const reg = globalShortcut.register('CmdOrCtrl+Alt+P', () => {
     if (!reg) {
-      console.log('global shortcut registration failed');
-      logger.messages.push({description: 'global shortcut registration failed', value: '(no value)'});
+      logger.error('global shortcut registration failed');
+      browserLogger.log('global shortcut registration failed', '(no value)');
     }
-    console.log('global screenshot')
-    logger.messages.push({description: 'global screenshot', value: '(no value)'});
 
-    // captureScreen(SCREEN_SIZE);
+    logger.info('global screenshot')
+    browserLogger.messages.push({description: 'global screenshot', value: '(no value)'});
 
-    // screenCapBuffer();
-    screenshotBuffer().then(buffer => {
+    // BUG: packaged version returns error: ENOTDIR
+    darwinSnapshot().then(buffer => {
+      logger.info('electron.js:187, buffer:', buffer);
+      browserLogger.log('electron.js:188, buffer:', buffer);
+ 
       // Make image buffer available to render process throug global var
-      console.log('screenCapBuffer, buffer', buffer);
-      logger.messages.push({description: 'screenCapBuffer, buffer', value: buffer});
-
       global.imageBuffer = buffer;
+      logger.info('electron.js:192, global.imageBuffer:', global.imageBuffer);
+      browserLogger.log('electron.js:193, global.imageBuffer:', global.imageBuffer);
+      
       // Create browser window ater buffer is available in global var
       // createWindow(); 
     }).catch(err => {
       console.error('screenCapBuffer error:', err);
-      logger.messages.push({description: 'screenCapBuffer error:', value: err})
+      browserLogger.log('screenCapBuffer error:', err);
     });
 
     createWindow();

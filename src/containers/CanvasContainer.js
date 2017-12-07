@@ -10,6 +10,7 @@ class CanvasContainer extends Component {
 
 	render() {
 		const { selectedTool } = this.props.tools;
+		// console.log('CanvasContainer, this:', this)
 		return (
 			<div>
 				<div className="tools-container">

@@ -25,19 +25,23 @@ class Canvas extends Component {
 
 	componentDidMount() {
 		this.canvas = this.canvasRef;
-		console.log('this.canvas', this.canvas)
+		console.log('Canvas, this.canvas:', this.canvas)
 
 		this.ctx = this.canvas.getContext('2d');
 
 		// Load and render captured screen image
 		if (window.require) {
 			const { remote } = window.require('electron');
+			const screenCapBuffer = window.require('screenshot-desktop');
 
 			// BUG: In dist, imageBuffer returns undefined
-			const imageBuffer = remote.getGlobal('imageBuffer');
+			const imageBuffer = remote.getGlobal('imageBuffer');			
 			console.log('imageBuffer', imageBuffer);
 
-			const u8array = new Uint8Array(remote.getGlobal('imageBuffer'));
+			// imageBuffer.toPNG();
+			// console.log('imageBuffer.toPNG:', imageBuffer);
+
+			const u8array = new Uint8Array(imageBuffer);
 			console.log('u8array', u8array);
 
 			const blob = new Blob([ imageBuffer ], { type: "image/png" });
@@ -52,6 +56,12 @@ class Canvas extends Component {
 			});
 		}
 
+		// console.log('Canvas, this.props.screenshot:', this.props.screenshot)
+		// this.screenshot = this.props.screenshot;
+		// this.screenshot.addEventListener('load', () => {
+		// 	console.log('IMAGE LOADED')
+		// 	this.drawScreenshot(this.ctx, this.screenshot);
+		// });
 		
 		if (window.require) {
 			const { ipcRenderer	} = window.require('electron');
@@ -62,7 +72,7 @@ class Canvas extends Component {
 			ipcRenderer.on('undo', () => { this.undo(); });
 
 			// Listen for logger messages
-			ipcRenderer.on('logger', (e, logs) => {
+			ipcRenderer.on('logger-messages', (e, logs) => {
 				console.log('### Logger messages ###', logs);
 				logs.forEach(log => {
 					console.log(log.description, log.value)
