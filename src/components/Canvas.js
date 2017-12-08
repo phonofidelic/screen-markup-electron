@@ -31,19 +31,9 @@ class Canvas extends Component {
 
 		// Load and render captured screen image
 		if (window.require) {
-			const { remote } = window.require('electron');
-			const screenCapBuffer = window.require('screenshot-desktop');
+			const { remote, ipcRenderer } = window.require('electron');
 
-			// BUG: In dist, imageBuffer returns undefined
 			const imageBuffer = remote.getGlobal('imageBuffer');			
-			console.log('imageBuffer', imageBuffer);
-
-			// imageBuffer.toPNG();
-			// console.log('imageBuffer.toPNG:', imageBuffer);
-
-			const u8array = new Uint8Array(imageBuffer);
-			console.log('u8array', u8array);
-
 			const blob = new Blob([ imageBuffer ], { type: "image/png" });
 			const url = URL.createObjectURL(blob);
 
@@ -54,32 +44,21 @@ class Canvas extends Component {
 				console.log('IMAGE LOADED')
 				this.drawScreenshot(this.ctx, this.screenshot);
 			});
-		}
 
-		// console.log('Canvas, this.props.screenshot:', this.props.screenshot)
-		// this.screenshot = this.props.screenshot;
-		// this.screenshot.addEventListener('load', () => {
-		// 	console.log('IMAGE LOADED')
-		// 	this.drawScreenshot(this.ctx, this.screenshot);
-		// });
-		
-		if (window.require) {
-			const { ipcRenderer	} = window.require('electron');
-
-			// Listen for save message sent from keyboard shortcut in main process
+			// Listen for user actions from keyboard shortcuts in main process
 			ipcRenderer.on('save-img', () => { this.save(); });
-
 			ipcRenderer.on('undo', () => { this.undo(); });
 
-			// Listen for logger messages
+			// Listen for logger messages from main process
 			ipcRenderer.on('logger-messages', (e, logs) => {
-				console.log('### Logger messages ###', logs);
+				console.log('### START LOGGER MESSAGES ###', logs);
 				logs.forEach(log => {
-					console.log(log.description, log.value)
+					console.log(log.description, log.value);
 				})
+				console.log('### END LOGGER MESSAGES ###')
 			})
-
-			ipcRenderer.send('window-loaded', 'hello');
+			// Let main process know when component has mounted
+			ipcRenderer.send('canvas-did-mount');
 		}	
 	}
 

@@ -1,23 +1,18 @@
 const electron = require('electron');
-// Module to control application life.
-const app = electron.app;
-const { dialog, clipboard } = require('electron');
-
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
-// const { BrowserWindow } = require('electron').remote;
-const { Menu, MenuItem, globalShortcut, ipcMain } = require('electron');
-
-const screenshot = require('desktop-screenshot');
-const screenshotBuffer = require('screenshot-desktop');
+const { 
+  Menu, 
+  MenuItem, 
+  globalShortcut, 
+  ipcMain, 
+  BrowserWindow, 
+  app 
+} = electron;
 
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const exec = require('child_process').exec;
 const temp = require('temp').track();
-
-const canvasBuffer = require('electron-canvas-to-buffer');
 
 // Logger stores console messegas and sends them to render process 
 // once browser window has been created
@@ -39,35 +34,34 @@ const browserLogger = new Logger();
 // Create new Winston logger instance
 const logger = require('./utils/logger');
 
-const APP_DATA_PATH = app.getAppPath('appData');
-logger.info('APP_DATA_PATH:', APP_DATA_PATH);
-browserLogger.log('APP_DATA_PATH:', APP_DATA_PATH);
-
+// TODO: Move to module
+// Takes a screenshot of the users desktop using Mac screencapture command.
+// Saves screenshot to a temporary .png file, then reads that file and 
+// returns a promise containing a buffer array of the image data.
 const darwinSnapshot = () => {
   return new Promise((resolve, reject) => {
     var tmpPath = temp.path({ suffix: '.png' });
-    // var tmpPath = path.join(APP_DATA_PATH, '/ScreenMarkup/tempImg.png');
     logger.debug('darwinSnapshot, tmpPath:', tmpPath);
     browserLogger.log('darwinSnapshot, tmpPath:', tmpPath);
 
     exec('screencapture -x -t png ' + tmpPath, function (err, stdOut) {
       if (err) {
+        logger.error('darwinSnapshot, exec error:', err);
         browserLogger.log('darwinSnapshot, exec error:', err);
         return reject(err)
       } else {
         fs.readFile(tmpPath, function (err, img) {
           if (err) {
-            browserLogger.messages.push({description: 'darwinSnapshot error at fs.readFile:', value: err})
+            browserLogger.log('darwinSnapshot error at fs.readFile:', err);
             return reject(err)
           } else {
             logger.debug('darwinSnapshot resolve, img:', img);
             browserLogger.log('darwinSnapshot resolve, img:', img);
             resolve(img);
           }
-          // TODO: move unlink to after user is done with image?
           fs.unlink(tmpPath, function (err) {
             if (err) {
-              browserLogger.messages.push({description: 'darwinSnapshot error at fs.unlink:', value: err})
+              browserLogger.log('darwinSnapshot error at fs.unlink:', err);
               return reject(err)
             }
           })
@@ -83,12 +77,6 @@ const startUrl = process.env.ELECTRON_START_URL || url.format({
   slashes: true
 });
 
-const screenshotUrl = process.env.SCREENSHOT_URL || url.format({
-  pathname: path.join(__dirname, '/assets/screenshot.png'),
-  protocol: 'file',
-  slashes: true
-});
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -96,28 +84,6 @@ let mainWindow;
 // Keep track of devTools toggle state
 // TODO: move to wherever we are keeping track of state (model)
 let devToolsOpen = false;
-
-// const captureScreen = (winSize) => {
-//   console.log('*capture screen*');
-//   screenshot(path.join(__dirname, '/../public/screenshot.png'), {width: winSize.width, height: winSize.height}, function(error, complete) {
-//     if(error)
-//       console.log("Screenshot failed", error);
-//     else
-//       console.log("Screenshot succeeded");
-//   });
-// }
-
-const screenCapBuffer = () => {
-  screenshotBuffer().then(buffer => {
-    // Make image buffer available to render process throug global var
-    console.log('screenCapBuffer, buffer', buffer);
-    global.imageBuffer = buffer;
-    // Create browser window ater buffer is available in global var
-    createWindow(); 
-  }).catch(err => {
-    console.error('screenCapBuffer error:', err);
-  });
-}
 
 const toggleDevTools = () => {
   // Initiate devtron tab in devtools
@@ -143,11 +109,7 @@ const createWindow = () => {
     width: width, 
     height: height, 
     titleBarStyle: 'hidden'
-    // show: false
   });
-
-  browserLogger.log('startUrl', startUrl);
-  logger.info('winston: startUrl', startUrl);
 
   mainWindow.loadURL(startUrl);
   // mainWindow.loadURL('http://localhost:3000');  
@@ -161,10 +123,9 @@ const createWindow = () => {
   });
 }
 
-ipcMain.on('window-loaded', (e) => {
-  logger.info('window loaded')
-  // Show window after screenshot is loaded
-  // mainWindow.show();
+// Listen for window-loaded event from render process. 
+// This event is fired once Canvas react component has mounted.
+ipcMain.on('canvas-did-mount', (e) => {
   // Send loggs to render process
   browserLogger.sendLogs(mainWindow);  
 });
@@ -180,30 +141,20 @@ app.on('ready', () => {
   const reg = globalShortcut.register('CmdOrCtrl+Alt+P', () => {
     if (!reg) {
       logger.error('global shortcut registration failed');
-      browserLogger.log('global shortcut registration failed', '(no value)');
+      browserLogger.log('global shortcut registration failed', '');
     }
 
-    logger.info('global screenshot')
-    browserLogger.messages.push({description: 'global screenshot', value: '(no value)'});
-
-    // BUG: packaged version returns error: ENOTDIR
     darwinSnapshot().then(buffer => {
-      logger.info('electron.js:187, buffer:', buffer);
-      browserLogger.log('electron.js:188, buffer:', buffer);
  
       // Make image buffer available to render process throug global var
       global.imageBuffer = buffer;
-      logger.info('electron.js:192, global.imageBuffer:', global.imageBuffer);
-      browserLogger.log('electron.js:193, global.imageBuffer:', global.imageBuffer);
       
       // Create browser window ater buffer is available in global var
-      // createWindow(); 
+      createWindow(); 
     }).catch(err => {
       console.error('screenCapBuffer error:', err);
       browserLogger.log('screenCapBuffer error:', err);
     });
-
-    createWindow();
   });
 });
 
