@@ -14,6 +14,7 @@ const fs = require('fs');
 const exec = require('child_process').exec;
 const temp = require('temp').track();
 
+// TODO: Move Loger to an external module
 // Logger stores console messegas and sends them to render process 
 // once browser window has been created
 class Logger {
