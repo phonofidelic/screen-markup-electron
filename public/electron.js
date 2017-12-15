@@ -14,23 +14,58 @@ const fs = require('fs');
 const exec = require('child_process').exec;
 const temp = require('temp').track();
 
-// TODO: Move Loger to an external module
-// Logger stores console messegas and sends them to render process 
+// Enable sending line numbers with loggs
+// from: https://stackoverflow.com/questions/14172455/get-name-and-line-of-calling-function-in-node-js
+Object.defineProperty(global, '__stack', {
+get: function() {
+        var orig = Error.prepareStackTrace;
+        Error.prepareStackTrace = function(_, stack) {
+            return stack;
+        };
+        var err = new Error;
+        Error.captureStackTrace(err, arguments.callee);
+        var stack = err.stack;
+        Error.prepareStackTrace = orig;
+        return stack;
+    }
+});
+
+Object.defineProperty(global, '__line', {
+get: function() {
+        return __stack[1].getLineNumber();
+    }
+});
+
+Object.defineProperty(global, '__function', {
+get: function() {
+        return __stack[1].getFunctionName();
+    }
+});
+
+// TODO: Move BrowserLoger to an external module
+// BrowserLogger stores console messegas and sends them to render process 
 // once browser window has been created
-class Logger {
-  constructor() {
-    this.messages = [];
+class BrowserLogger {
+  constructor(filename) {
+
+    this.messages = [{description: '### START LOGGER MESSAGES ###', value: null}];
+    this.filename = filename;
   }
 
-  log(description, value) {
-    this.messages.push({description: description, value: value});
+  log(description, value, line) {
+    if (!line) { line = 'no line number'}
+    this.messages.push({
+      description: `from ${this.filename}:${line}\n ${description}`, 
+      value: value
+    });
   }
 
   sendLogs(win) {
+    this.log('### END LOGGER MESSAGES ###', null)
     win.webContents.send('logger-messages', this.messages);
   }
 }
-const browserLogger = new Logger();
+const browserLogger = new BrowserLogger('electron.js');
 
 // Create new Winston logger instance
 const logger = require('./utils/logger');
@@ -39,30 +74,33 @@ const logger = require('./utils/logger');
 // Takes a screenshot of the users desktop using Mac screencapture command.
 // Saves screenshot to a temporary .png file, then reads that file and 
 // returns a promise containing a buffer array of the image data.
+//
+// This function is taken from the desktop-screenshot module.
+// The function was altered to work with electron (see https://github.com/phonofidelic/screen-markup-electron/commit/ec668ab1665deb28d0ae80c4367736936e87ae15)
 const darwinSnapshot = () => {
   return new Promise((resolve, reject) => {
     var tmpPath = temp.path({ suffix: '.png' });
     logger.debug('darwinSnapshot, tmpPath:', tmpPath);
-    browserLogger.log('darwinSnapshot, tmpPath:', tmpPath);
+    browserLogger.log('darwinSnapshot, tmpPath:', tmpPath, __line);
 
     exec('screencapture -x -t png ' + tmpPath, function (err, stdOut) {
       if (err) {
         logger.error('darwinSnapshot, exec error:', err);
-        browserLogger.log('darwinSnapshot, exec error:', err);
+        browserLogger.log('darwinSnapshot, exec error:', err, __line);
         return reject(err)
       } else {
         fs.readFile(tmpPath, function (err, img) {
           if (err) {
-            browserLogger.log('darwinSnapshot error at fs.readFile:', err);
+            browserLogger.log('darwinSnapshot error at fs.readFile:', err, __line);
             return reject(err)
           } else {
             logger.debug('darwinSnapshot resolve, img:', img);
-            browserLogger.log('darwinSnapshot resolve, img:', img);
+            browserLogger.log('darwinSnapshot resolve, img:', img, __line);
             resolve(img);
           }
           fs.unlink(tmpPath, function (err) {
             if (err) {
-              browserLogger.log('darwinSnapshot error at fs.unlink:', err);
+              browserLogger.log('darwinSnapshot error at fs.unlink:', err, __line);
               return reject(err)
             }
           })
@@ -142,7 +180,7 @@ app.on('ready', () => {
   const reg = globalShortcut.register('CmdOrCtrl+Alt+P', () => {
     if (!reg) {
       logger.error('global shortcut registration failed');
-      browserLogger.log('global shortcut registration failed', '');
+      browserLogger.log('global shortcut registration failed', '', __line);
     }
 
     darwinSnapshot().then(buffer => {
@@ -154,7 +192,7 @@ app.on('ready', () => {
       createWindow(); 
     }).catch(err => {
       console.error('screenCapBuffer error:', err);
-      browserLogger.log('screenCapBuffer error:', err);
+      browserLogger.log('screenCapBuffer error:', err, __line);
     });
   });
 });

@@ -51,11 +51,9 @@ class Canvas extends Component {
 
 			// Listen for logger messages from main process
 			ipcRenderer.on('logger-messages', (e, logs) => {
-				console.log('### START LOGGER MESSAGES ###', logs);
 				logs.forEach(log => {
 					console.log(log.description, log.value);
 				})
-				console.log('### END LOGGER MESSAGES ###')
 			})
 			// Let main process know when component has mounted
 			ipcRenderer.send('canvas-did-mount');
