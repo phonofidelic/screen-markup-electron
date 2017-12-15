@@ -17,29 +17,29 @@ const temp = require('temp').track();
 // Enable sending line numbers with loggs
 // from: https://stackoverflow.com/questions/14172455/get-name-and-line-of-calling-function-in-node-js
 Object.defineProperty(global, '__stack', {
-get: function() {
-        var orig = Error.prepareStackTrace;
-        Error.prepareStackTrace = function(_, stack) {
-            return stack;
-        };
-        var err = new Error;
-        Error.captureStackTrace(err, arguments.callee);
-        var stack = err.stack;
-        Error.prepareStackTrace = orig;
+  get: function() {
+    var orig = Error.prepareStackTrace;
+    Error.prepareStackTrace = function(_, stack) {
         return stack;
-    }
+    };
+    var err = new Error;
+    Error.captureStackTrace(err, arguments.callee);
+    var stack = err.stack;
+    Error.prepareStackTrace = orig;
+    return stack;
+  }
 });
 
 Object.defineProperty(global, '__line', {
-get: function() {
-        return __stack[1].getLineNumber();
-    }
+  get: function() {
+    return __stack[1].getLineNumber();
+  }
 });
 
 Object.defineProperty(global, '__function', {
-get: function() {
-        return __stack[1].getFunctionName();
-    }
+  get: function() {
+    return __stack[1].getFunctionName();
+  }
 });
 
 // TODO: Move BrowserLoger to an external module
@@ -177,7 +177,7 @@ app.on('ready', () => {
   Menu.setApplicationMenu(menu);
 
   // Register global keyboard shortcut for screen capture
-  const reg = globalShortcut.register('CmdOrCtrl+Alt+P', () => {
+  const reg = globalShortcut.register('CmdOrCtrl+Shift+1', () => {
     if (!reg) {
       logger.error('global shortcut registration failed');
       browserLogger.log('global shortcut registration failed', '', __line);
@@ -198,7 +198,7 @@ app.on('ready', () => {
 });
 
 app.on('will-quit', () => {
-  globalShortcut.unregister('CmdOrCtrl+Alt+P');
+  globalShortcut.unregister('CmdOrCtrl+Shift+1');
 });
 
 // Quit when all windows are closed.
