@@ -14,17 +14,19 @@ const drawShapes = (ctx, shapeList) => {
 	})
 }
 
+const DEFAULT_RECTANGLE_DATA = {
+	// TODO: Set shapeData from settings props
+	type: 'rectangle',
+	strokeStyle: '#f22a2a',
+	lineWidth: 3,
+	lineDash: [0, 0]
+};
+
 export class Rectangle {
 	constructor() {
 		this.type = 'rectangle';
 		// Empty objects to hold shap and selData data
-		this.shapeData = {
-			// TODO: Set shapeData from settings props
-			type: 'rectangle',
-			strokeStyle: '#f22a2a',
-			lineWidth: 3,
-			lineDash: [0, 0]
-		};
+		this.shapeData = { ...DEFAULT_RECTANGLE_DATA };
 		this.selData = {
 			strokeStyle: '#ccc',
 			lineWidth: 3,
@@ -39,10 +41,10 @@ export class Rectangle {
 		// Create selection shape
 		this.sel = new Shape(this.selData);
 
-		this.shapeData.x = e.clientX;
-		this.shapeData.y = e.clientY;
-		this.sel.x = e.clientX;
-		this.sel.y = e.clientY;
+		this.shapeData.x = e.pageX;
+		this.shapeData.y = e.pageY;
+		this.sel.x = e.pageX;
+		this.sel.y = e.pageY;
 
 		console.log('rectangle mouseDown', this.shapeData);
 	}
@@ -58,8 +60,8 @@ export class Rectangle {
 		ctx.setLineDash(this.selData.lineDash);
 
 		// Set selection shape width and height
-		this.sel.width = e.clientX - this.sel.x;
-		this.sel.height = e.clientY - this.sel.y;
+		this.sel.width = e.pageX - this.sel.x;
+		this.sel.height = e.pageY - this.sel.y;
 
 		this.sel.drawRect(ctx);
 	}
@@ -67,8 +69,8 @@ export class Rectangle {
 	mouseUp(e, ctx, shapeList) {
 		console.log('rectangle mouseUp');
 
-		this.shapeData.width = e.clientX - this.shapeData.x;
-		this.shapeData.height = e.clientY - this.shapeData.y;
+		this.shapeData.width = e.pageX - this.shapeData.x;
+		this.shapeData.height = e.pageY - this.shapeData.y;
 
 		// Set style for shape
 		ctx.strokeStyle = this.shapeData.strokeStyle;
@@ -106,11 +108,11 @@ export class Brush {
 
 		drawShapes(ctx, shapeList);
 
-		this.shapeData.x = e.clientX;
-		this.shapeData.y = e.clientY;
+		this.shapeData.x = e.pageX;
+		this.shapeData.y = e.pageY;
 
 		this.shape = new Shape(this.shapeData);
-		this.shape.points.push({x: e.clientX, y: e.clientY});
+		this.shape.points.push({x: e.pageX, y: e.pageY});
 
 		ctx.strokeStyle = this.shape.strokeStyle;
 		ctx.lineWidth = this.shape.lineWidth;
@@ -125,7 +127,7 @@ export class Brush {
 
 		drawShapes(ctx, shapeList);
 
-		const newPoint = {x: e.clientX, y: e.clientY};
+		const newPoint = {x: e.pageX, y: e.pageY};
 		this.shape.points.push(newPoint);
 
 		this.shape.drawLine(ctx);

@@ -70,9 +70,7 @@ class Canvas extends Component {
 		}
 		
 		this.drawScreenshot(this.ctx, this.screenshot);
-
 		this.shapeList.pop();
-
 		this.shapeList.forEach(shape => {
 			shape.draw(this.ctx);
 		});
@@ -107,13 +105,10 @@ class Canvas extends Component {
 	}
 
 	handleMouseDown(e) {
-		console.log('handleMouseDown, tool', this.props.tool);
-
 		this.mouseIsDown = true;
 
 		// Draw screenshot again
 		this.drawScreenshot(this.ctx, this.screenshot);
-		console.log('mousedoun, this.screenshot', this.screenshot)
 
 		if (!this.props.tool.mouseDown) {
 			return console.log('no Rectangle mouseDown')
@@ -134,7 +129,6 @@ class Canvas extends Component {
 	}
 
 	handleMouseUp(e) {
-		console.log('handleMouseUp');
 		this.mouseIsDown = false;
 
 		// Draw screenshot again
@@ -144,8 +138,6 @@ class Canvas extends Component {
 			return console.log('no tool mouseUp')
 		}
 		this.shapeList = this.props.tool.mouseUp(e, this.ctx, this.shapeList)
-
-		console.log('Canvas this.shapeList:', this.shapeList)
 	}
 
 	render() {

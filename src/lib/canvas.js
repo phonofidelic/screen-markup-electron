@@ -18,13 +18,6 @@ class CanvasClass {
 	constructor() {
 		// A list to store data for shapes drawn in the canvas
 		this.shapes = [];
-		// this.tools = [
-		// 	{rect: false},
-		// 	{pencil: false},
-		// 	{text: false},
-		// 	{eraser: false},
-		// 	{crop: false}
-		// ]
 		this.tools = {
 			rect: false,
 			pencil: false,
@@ -32,17 +25,9 @@ class CanvasClass {
 			eraser: false,
 			crop: false
 		}
-		
 	};
 
 	init() {
-		// console.log('canvas.tools', this.tools["rect"])
-		// Object.keys(this.tools).forEach(tool => {
-		// 	console.log('tool:', tool)
-		// })
-
-		
-
 		this.canvas = document.getElementById('canvas');
 		// this.canvas = document.createElement('canvas');
 		this.ctx = this.canvas.getContext('2d');
@@ -67,9 +52,7 @@ class CanvasClass {
 		}
 		
 		this.ctx.drawImage(this.screenshot, 0, 0, W_OUTER_WIDTH, W_OUTER_HEIGHT);
-
 		this.shapes.pop();
-
 		this.shapes.forEach(shape => {
 			shape.draw(this.ctx);
 		});
