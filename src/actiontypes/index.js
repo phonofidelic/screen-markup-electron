@@ -4,4 +4,5 @@ export const SET_COLOR = 'set_color',
 						 SELECT_TOOL = 'select_tool',
 						 ADD_SHAPE = 'add_shape',
 						 DRAW_SHAPE = 'draaw_shape',
-						 UNDO_LAST_DRAW = 'undo_last_draw';
+						 UNDO_LAST_DRAW = 'undo_last_draw',
+						 TOGGLE_TOOLS = 'toggle_tools';

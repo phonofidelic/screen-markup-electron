@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from './actions';
-import './App.css';
-import Tools from './containers/Tools';
+import ToolsContainer from './containers/ToolsContainer';
 import CanvasContainer from './containers/CanvasContainer';
+import './App.css';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
+        <ToolsContainer />
         <CanvasContainer />
       </div>
     );

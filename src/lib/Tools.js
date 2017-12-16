@@ -1,11 +1,11 @@
 import Shape from './Shape';
-import {
-	RECTANGLE,
-	BRUSH,
-	TEXT,
-	ERASER,
-	CROP
-} from '../tooltypes';
+// import {
+// 	RECTANGLE,
+// 	BRUSH,
+// 	TEXT,
+// 	ERASER,
+// 	CROP
+// } from '../tooltypes';
 
 const drawShapes = (ctx, shapeList) => {
 	shapeList.forEach(shape => {

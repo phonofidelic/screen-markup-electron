@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import FontAwesome from 'react-fontawesome';
+import FontAwsome from 'react-fontawesome';
 import Tool from '../components/Tool';
 
-class Tools extends Component {
+class ToolsContainer extends Component {
   constructor(props) {
     super(props);
 
-    console.log('* Tools props', props)
+    console.log('* ToolsContainer props', props)
 
     // Default tool selection
     this.props.selectRectangle();
@@ -25,29 +25,35 @@ class Tools extends Component {
     } 
   }
 
+  renderTools() {
+    const {tools, selectTool} = this.props;
+
+    return tools.toolsList.map((tool, i) => {
+      return (
+        <Tool faName={tool.faName}
+              title={tool.title}
+              tooltype={tool.tooltype}
+              selectTool={selectTool}
+              selectedTool={tools.selectedTool.type}
+              key={i} />
+      )
+    });
+  }
+
 	render() {
     const { 
       tools, 
       selectTool,
-      selectRectangle,
-      selectBrush,
-      selectText,
-      selectEraser,
-      selectCrop
+      toggleTools
     } = this.props;
 
+    console.log('showTools:', tools.showTools)
 		return (
 		  <div className="tools-container">
-        {tools.toolsList.map((tool, i) => {
-          return(
-            <Tool faName={tool.faName}
-                  title={tool.title}
-                  tooltype={tool.tooltype}
-                  selectTool={selectTool}
-                  selectedTool={tools.selectedTool.type}
-                  key={i} />
-          )
-        })}
+        <FontAwsome name='bars' 
+                    className="tool"
+                    onClick={() => { toggleTools() }} />
+        {tools.showTools && this.renderTools()}
 
         {/*<FontAwesome name='crop' 
                              className="tool" 
@@ -89,4 +95,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps, actions)(Tools);
+export default connect(mapStateToProps, actions)(ToolsContainer)

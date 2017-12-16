@@ -1,4 +1,4 @@
-import { INIT_CANVAS, ADD_SHAPE, DRAW_SHAPE, UNDO_LAST_DRAW } from '../actiontypes';
+import { ADD_SHAPE, DRAW_SHAPE, UNDO_LAST_DRAW } from '../actiontypes';
 
 const INITIAL_STATE = {
 	canvasShapes: []

@@ -3,15 +3,12 @@
 }
 
 .canvas-container {
-  /*background: #6c6d69;*/
   background: #fff;
   position: fixed;
   left: 0;
-  /*top: 40px;*/
   width: 100vw;
   height: 100vh;
   color: #fff;
-  /*z-index: 1002;*/
 }
 
 #canvas {
@@ -21,27 +18,19 @@
 .tools-container {
   position: fixed;
   right: 0;
-  /*top: 0;*/
   text-align: right;
-  /*margin-right: 5px;*/
-  max-width: 28px;
-  /*height: 100%;*/
-  /*height: 22px;*/
-  width: 100%;
-  background: #272822;
-  /*background: #cfcdcf;*/
+  margin: 10px;
+  width: 30px;
   z-index: 1001;
 }
 
 .tool {
   background: #272822;
-  width: 20px;
-  height: 20px;
-  margin-top: 1px;
-  margin-right: 3px;
-  /*padding: 5px;*/
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 3px auto;
   text-align: center;
-  line-height: 20px;
+  line-height: 30px;
   border-radius: 100%;
   color: #fff;
 }

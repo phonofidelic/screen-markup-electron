@@ -1,10 +1,6 @@
 import { 
-	INIT_CANVAS, 
-	SET_COLOR, 
-	SELECT_TOOL, 
-	ADD_SHAPE, 
-	DRAW_SHAPE, 
-	UNDO_LAST_DRAW 
+	SELECT_TOOL,
+	TOGGLE_TOOLS
 } from '../actiontypes';
 
 import { Rectangle, Brush, Text, Eraser, Crop } from '../lib/Tools';
@@ -12,6 +8,14 @@ import { Rectangle, Brush, Text, Eraser, Crop } from '../lib/Tools';
 const toolConstructors = {
 	'rectangle': new Rectangle(),
 	'brush': new Brush()
+}
+
+export const toggleTools = () => {
+	return dispatch => {
+		dispatch({
+			type: TOGGLE_TOOLS
+		})
+	}
 }
 
 export const selectTool = (tooltype) => {
