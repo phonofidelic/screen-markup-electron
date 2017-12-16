@@ -9,11 +9,25 @@ import {
 
 import { Rectangle, Brush, Text, Eraser, Crop } from '../lib/Tools';
 
+const toolConstructors = {
+	'rectangle': new Rectangle(),
+	'brush': new Brush()
+}
+
+export const selectTool = (tooltype) => {
+	return dispatch => {
+		dispatch({
+			type: SELECT_TOOL,
+			payload: toolConstructors[tooltype]
+		});
+	}
+};
+
 export const selectRectangle = () => {
 	return dispatch => {
 		dispatch({
 			type: SELECT_TOOL,
-			payload: new Rectangle()
+			payload: toolConstructors['rectangle']
 		});
 	}
 };

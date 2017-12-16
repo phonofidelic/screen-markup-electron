@@ -20,13 +20,13 @@
 
 .tools-container {
   position: fixed;
-  /*right: 0;*/
+  right: 0;
   /*top: 0;*/
   text-align: right;
-  margin-right: 5px;
-  /*max-width: 28px;*/
-  /*height: 100vh;*/
-  height: 22px;
+  /*margin-right: 5px;*/
+  max-width: 28px;
+  /*height: 100%;*/
+  /*height: 22px;*/
   width: 100%;
   background: #272822;
   /*background: #cfcdcf;*/

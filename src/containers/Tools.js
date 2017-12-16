@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 import FontAwesome from 'react-fontawesome';
+import Tool from '../components/Tool';
 
 class Tools extends Component {
   constructor(props) {
@@ -21,25 +22,13 @@ class Tools extends Component {
       // Listen for tool selection sent from keyboard shortcuts in main process
       ipcRenderer.on('select-rectangle', () => { selectRectangle(); });
       ipcRenderer.on('select-brush', () => { selectBrush(); });
-
     } 
-  }
-
-  handleUndo() {
-    console.log('handleUndo')
-    if (window.require) {
-      const { ipcRenderer } = window.require('electron');
-      ipcRenderer.send('undo')
-    }
-  }
-
-  handleSave() {
-    console.log('handleSave')
   }
 
 	render() {
     const { 
       tools, 
+      selectTool,
       selectRectangle,
       selectBrush,
       selectText,
@@ -49,6 +38,17 @@ class Tools extends Component {
 
 		return (
 		  <div className="tools-container">
+        {tools.toolsList.map((tool, i) => {
+          return(
+            <Tool faName={tool.faName}
+                  title={tool.title}
+                  tooltype={tool.tooltype}
+                  selectTool={selectTool}
+                  selectedTool={tools.selectedTool.type}
+                  key={i} />
+          )
+        })}
+
         {/*<FontAwesome name='crop' 
                              className="tool" 
                              title="Crop image"
@@ -60,17 +60,7 @@ class Tools extends Component {
                              title="Color" 
                              style={{color: tools.selectedColor}}/>*/}
 
-        <FontAwesome name='square-o' 
-                     className="tool" 
-                     title="Rectangle [R]"
-                     style={tools.selectedTool.type === 'rectangle' ? {background: '#515151'} : null}
-                     onClick={() => { selectRectangle() }} />
 
-        <FontAwesome name='pencil' 
-                     className="tool" 
-                     title="Brush [B]"
-                     style={tools.selectedTool.type === 'brush' ? {background: '#515151'} : null}
-                     onClick={() => { selectBrush() }} />
 
         {/*<FontAwesome name='eraser' 
                              className="tool" 

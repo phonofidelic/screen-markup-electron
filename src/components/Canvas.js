@@ -2,7 +2,7 @@
 		https://github.com/svrcekmichal/react-sketchpad/blob/master/src/SketchPad.jsx
 */
 import React, { Component } from 'react';
-import Shape from '../lib/Shape';
+// import Shape from '../lib/Shape';
 // import Rectangle from '../lib/Rectangle';
 import { Rectangle, Brush, Text, Eraser, Crop } from '../lib/Tools';
 

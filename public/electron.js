@@ -14,6 +14,14 @@ const fs = require('fs');
 const exec = require('child_process').exec;
 const temp = require('temp').track();
 
+// Set START_URL according to environment
+// const START_URL = 'http://localhost:3000';
+const START_URL = process.env.ELECTRON_START_URL || url.format({
+  pathname: path.join(__dirname, '/../build/index.html'),
+  protocol: 'file:',
+  slashes: true
+});
+
 // Enable sending line numbers with loggs
 // from: https://stackoverflow.com/questions/14172455/get-name-and-line-of-calling-function-in-node-js
 Object.defineProperty(global, '__stack', {
@@ -110,11 +118,19 @@ const darwinSnapshot = () => {
   })
 }
 
-const startUrl = process.env.ELECTRON_START_URL || url.format({
-  pathname: path.join(__dirname, '/../build/index.html'),
-  protocol: 'file:',
-  slashes: true
-});
+const screenCapBuffer = () => {
+  darwinSnapshot().then(buffer => {
+
+    // Make image buffer available to render process throug global var
+    global.imageBuffer = buffer;
+    
+    // Create browser window ater buffer is available in global var
+    createWindow(); 
+  }).catch(err => {
+    console.error('screenCapBuffer error:', err);
+    browserLogger.log('screenCapBuffer error:', err, __line);
+  });
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -147,11 +163,10 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: width, 
     height: height, 
-    titleBarStyle: 'hidden'
+    titleBarStyle: 'default'
   });
 
-  mainWindow.loadURL(startUrl);
-  // mainWindow.loadURL('http://localhost:3000');  
+  mainWindow.loadURL(START_URL);
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -183,17 +198,7 @@ app.on('ready', () => {
       browserLogger.log('global shortcut registration failed', '', __line);
     }
 
-    darwinSnapshot().then(buffer => {
- 
-      // Make image buffer available to render process throug global var
-      global.imageBuffer = buffer;
-      
-      // Create browser window ater buffer is available in global var
-      createWindow(); 
-    }).catch(err => {
-      console.error('screenCapBuffer error:', err);
-      browserLogger.log('screenCapBuffer error:', err, __line);
-    });
+    screenCapBuffer();
   });
 });
 
@@ -227,7 +232,7 @@ const menuTemplate = [
     submenu: [
       {
         label: 'Capture screen',
-        accelerator: 'CmdOrCtrl+Alt+P',
+        accelerator: 'CmdOrCtrl+Shift+1',
         click: () => { screenCapBuffer(); }
       },
       {

@@ -14,7 +14,7 @@ class CanvasContainer extends Component {
 		return (
 			<div>
 				<div className="tools-container">
-					<Tools />										 
+					<Tools />								 
 				</div>
 
 				<div className="canvas-container">
