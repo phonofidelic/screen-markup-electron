@@ -58,7 +58,7 @@ class Canvas extends Component {
 			})
 			// Let main process know when component has mounted
 			ipcRenderer.send('canvas-did-mount');
-		}	
+		}
 	}
 
 	drawScreenshot(ctx, screenshot) {
@@ -79,29 +79,35 @@ class Canvas extends Component {
 
 	save() {
 		if (window.require) {
-			const remote = window.require('electron').remote;
-			const dialog = remote.dialog;
 			const fs = window.require('fs');
+			const exec = window.require('child_process').exec;
+			const { remote, ipcRenderer } = window.require('electron');
+			const dialog = remote.dialog;
+			const win = remote.getCurrentWindow();
 			const canvasBuffer = window.require('electron-canvas-to-buffer');
 
-			const win = remote.getCurrentWindow();
-
-			dialog.showSaveDialog(fileName => {
+			const saveFile = new Promise((resolve, reject) => {
+				const savePath = dialog.showSaveDialog();
 				const buffer = canvasBuffer(this.canvas, 'image/png');
 
-				fs.writeFile(`${fileName}.png`, buffer, err => {
+				fs.writeFile(`${savePath}.png`, buffer, err => {
 					if (err) {
-						throw err;
+						reject(err);
 					} else {
-						if (fileName) {
-							// Close window after successful save
-							win.close();	
-						} else {
-							// Do not close window if save was canceled
-							console.log('Save canceled');
-						}
+						resolve(savePath);
 					}
-				});
+				})
+			});
+
+			saveFile.then(savePath => {
+				if (!savePath) {
+					return console.log('Save canceled');
+				}
+				savePath = savePath.slice(0, savePath.lastIndexOf('/'));
+				exec(`open ${savePath}`);
+				win.close();
+			}).catch(err => {
+				console.error('saveFile error:', err)
 			});
 		}
 	}

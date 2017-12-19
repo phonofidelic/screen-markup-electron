@@ -22,6 +22,8 @@ const START_URL = 'http://localhost:3000';
 //   slashes: true
 // });
 
+const SCREENSHOT_KEY_COM = 'CmdOrCtrl+Shift+1';
+
 // Enable sending line numbers with loggs
 // from: https://stackoverflow.com/questions/14172455/get-name-and-line-of-calling-function-in-node-js
 Object.defineProperty(global, '__stack', {
@@ -192,7 +194,7 @@ app.on('ready', () => {
   Menu.setApplicationMenu(menu);
 
   // Register global keyboard shortcut for screen capture
-  const reg = globalShortcut.register('CmdOrCtrl+Shift+1', () => {
+  const reg = globalShortcut.register(SCREENSHOT_KEY_COM, () => {
     if (!reg) {
       logger.error('global shortcut registration failed');
       browserLogger.log('global shortcut registration failed', '', __line);
@@ -203,7 +205,7 @@ app.on('ready', () => {
 });
 
 app.on('will-quit', () => {
-  globalShortcut.unregister('CmdOrCtrl+Shift+1');
+  globalShortcut.unregister(SCREENSHOT_KEY_COM);
 });
 
 // Quit when all windows are closed.
@@ -232,7 +234,7 @@ const menuTemplate = [
     submenu: [
       {
         label: 'Capture screen',
-        accelerator: 'CmdOrCtrl+Shift+1',
+        accelerator: SCREENSHOT_KEY_COM,
         click: () => { screenCapBuffer(); }
       },
       {
