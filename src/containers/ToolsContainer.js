@@ -8,8 +8,6 @@ class ToolsContainer extends Component {
   constructor(props) {
     super(props);
 
-    console.log('* ToolsContainer props', props)
-
     // Default tool selection
     this.props.selectRectangle();
   }
@@ -43,7 +41,6 @@ class ToolsContainer extends Component {
 	render() {
     const { 
       tools, 
-      selectTool,
       toggleTools
     } = this.props;
 

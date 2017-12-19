@@ -8,6 +8,7 @@ import { Rectangle, Brush, Text, Eraser, Crop } from '../lib/Tools';
 
 class Canvas extends Component {
 	constructor(props) {
+		console.log('Canvas props:', props)
 		super(props);
 		this.handleMouseDown = this.handleMouseDown.bind(this);
 		this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -51,9 +52,9 @@ class Canvas extends Component {
 
 			// Listen for logger messages from main process
 			ipcRenderer.on('logger-messages', (e, logs) => {
-				logs.forEach(log => {
-					console.log(log.description, log.value);
-				})
+				// logs.forEach(log => {
+				// 	console.log(log.description, log.value);
+				// })
 			})
 			// Let main process know when component has mounted
 			ipcRenderer.send('canvas-did-mount');
@@ -85,19 +86,20 @@ class Canvas extends Component {
 
 			const win = remote.getCurrentWindow();
 
-			dialog.showSaveDialog(filePath => {
+			dialog.showSaveDialog(fileName => {
 				const buffer = canvasBuffer(this.canvas, 'image/png');
 
-				fs.writeFile(`${filePath}.png`, buffer, err => {
+				fs.writeFile(`${fileName}.png`, buffer, err => {
 					if (err) {
 						throw err;
 					} else {
-						console.log(`Write of ${filePath} was successful`);
-
-						// BUG: Window closes when cancel button is clicked.
-						// 			Should only close window on save button click.
-						// Close window after successful save
-						win.close();
+						if (fileName) {
+							// Close window after successful save
+							win.close();	
+						} else {
+							// Do not close window if save was canceled
+							console.log('Save canceled');
+						}
 					}
 				});
 			});

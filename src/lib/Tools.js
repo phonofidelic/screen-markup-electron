@@ -14,6 +14,7 @@ const drawShapes = (ctx, shapeList) => {
 	})
 }
 
+/****************** RECTANGLE **********************/
 const DEFAULT_RECTANGLE_DATA = {
 	// TODO: Set shapeData from settings props
 	type: 'rectangle',
@@ -87,7 +88,7 @@ export class Rectangle {
 	}
 }
 
-
+/****************** Brush **********************/
 const DEFAULT_BRUSH_DATA = {
 	// TODO: Set shapeData from settings props
 	type: 'line',
@@ -147,6 +148,68 @@ export class Brush {
 	}
 }
 
+/****************** ERASER **********************/
+const DEFAULT_ERASER_DATA = {
+	// TODO: Set shapeData from settings props
+	type: 'eraser',
+	strokeStyle: '#f22a2a',
+	lineWidth: 10,
+	lineDash: [0, 0],
+	points: []
+};
+
+export class Eraser {
+	constructor() {
+		this.type = 'eraser';
+		this.shapeData = { ...DEFAULT_ERASER_DATA }
+	}
+
+	mouseDown(e, ctx, shapeList) {
+		console.log('eraser mouseDown');
+
+		drawShapes(ctx, shapeList);
+
+		this.shapeData.x = e.pageX;
+		this.shapeData.y = e.pageY;
+
+		this.shape = new Shape(this.shapeData);
+		this.shape.points.push({x: e.pageX, y: e.pageY});
+
+		ctx.strokeStyle = this.shape.strokeStyle;
+		ctx.lineWidth = this.shape.lineWidth;
+		ctx.lineDash = this.shape.lineDash;
+		
+		ctx.moveTo(this.shape.x, this.shape.y);
+		ctx.beginPath();
+	}
+
+	mouseMove(e, ctx, shapeList) {
+		console.log('eraser mouseMove');
+
+		drawShapes(ctx, shapeList);
+
+		const newPoint = {x: e.pageX, y: e.pageY};
+		this.shape.points.push(newPoint);
+
+		this.shape.drawErase(ctx);
+	}
+
+	mouseUp(e, ctx, shapeList) {
+		console.log('eraser mouseUp');
+
+		// Will this work?
+		shapeList.push(this.shape);
+
+		drawShapes(ctx, shapeList);
+
+		// Empty points array so it is ready to hold new values for next line shape
+		this.shapeData.points = [];
+
+		return shapeList;
+	}
+}
+
+/****************** TEXT **********************/
 export class Text {
 	constructor() {
 		this.type = 'text';
@@ -165,24 +228,7 @@ export class Text {
 	}
 }
 
-export class Eraser {
-	constructor() {
-		this.type = 'eraser';
-	}
-
-	mouseDown() {
-		console.log('eraser mouseDown');
-	}
-
-	mouseMove() {
-		console.log('eraser mouseMove');
-	}
-
-	mouseUp() {
-		console.log('eraser mouseUp');
-	}
-}
-
+/****************** CROP **********************/
 export class Crop {
 	constructor() {
 		this.type = 'crop';

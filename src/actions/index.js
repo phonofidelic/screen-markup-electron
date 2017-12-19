@@ -7,7 +7,8 @@ import { Rectangle, Brush, Text, Eraser, Crop } from '../lib/Tools';
 
 const toolConstructors = {
 	'rectangle': new Rectangle(),
-	'brush': new Brush()
+	'brush': new Brush(),
+	'eraser': new Eraser()
 }
 
 export const toggleTools = () => {

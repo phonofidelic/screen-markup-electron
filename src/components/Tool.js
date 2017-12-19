@@ -3,7 +3,7 @@ import FontAwsome from 'react-fontawesome';
 
 class Tool extends Component {
 	render() {
-		const { faName, title, selectTool, tooltype, style, selectedTool } = this.props;
+		const { faName, title, selectTool, tooltype, selectedTool } = this.props;
 		return (
 			<FontAwsome name={faName}
 									className="tool"

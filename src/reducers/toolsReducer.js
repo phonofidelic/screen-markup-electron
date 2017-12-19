@@ -13,9 +13,24 @@ const INITIAL_STATE = {
 			faName: 'paint-brush',
 			title: 'Brush [B]',
 			tooltype: 'brush'
-		}
+		},
+		// {
+		// 	faName: 'eraser',
+		// 	title: 'Eraser [E]',
+		// 	tooltype: 'eraser'
+		// },
+		// {
+		// 	faName: 'undo',
+		// 	title: 'Undo [Cmd+Z]',
+		// 	tooltype: 'undo'
+		// }
 	],
-	showTools: false
+	showTools: false,
+	rectangleData: {
+		strokeStyle: '#ccc',
+		lineWidth: 3,
+		lineDash: [4, 2]	
+	}
 };
 
 const toolsReducer = (state = INITIAL_STATE, action) => {
