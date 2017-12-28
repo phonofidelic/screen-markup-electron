@@ -10,6 +10,7 @@ class Shape {
 		this.width = options.width || 1;
 		this.height = options.height || 1;
 		this.strokeStyle = options.strokeStyle || null;
+		this.lineWidth = options.lineWidth || 3;
 		this.points = options.points || [];
 	}
 

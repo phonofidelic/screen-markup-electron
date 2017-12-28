@@ -15,7 +15,7 @@ const INITIAL_STATE = {
 			tooltype: 'brush'
 		},
 		{
-			faName: 'mouse-pointer',
+			faName: 'long-arrow-right',
 			title: 'Arrow [A]',
 			tooltype: 'arrow'
 		}
