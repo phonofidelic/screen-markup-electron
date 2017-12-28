@@ -27,7 +27,7 @@ export class Rectangle {
 	constructor() {
 		this.type = 'rectangle';
 		// Empty objects to hold shap and selData data
-		this.shapeData = { ...DEFAULT_RECTANGLE_DATA };
+		this.shapeData = DEFAULT_RECTANGLE_DATA;
 		this.selData = {
 			strokeStyle: '#ccc',
 			lineWidth: 3,
@@ -37,7 +37,7 @@ export class Rectangle {
 
 	mouseDown(e, ctx, shapeList) {
 
-		drawShapes(ctx, shapeList, this.draw);
+		drawShapes(ctx, shapeList);
 
 		// Create selection shape
 		this.sel = new Shape(this.selData);
@@ -53,7 +53,7 @@ export class Rectangle {
 	mouseMove(e, ctx, shapeList) {
 		console.log('rectangle mouseMove');
 
-		drawShapes(ctx, shapeList, this.draw);
+		drawShapes(ctx, shapeList);
 
 		// Set style for selection shape
 		ctx.strokeStyle = this.selData.strokeStyle;
@@ -101,7 +101,7 @@ const DEFAULT_BRUSH_DATA = {
 export class Brush {
 	constructor() {
 		this.type = 'brush';
-		this.shapeData = {...DEFAULT_BRUSH_DATA};
+		this.shapeData = DEFAULT_BRUSH_DATA;
 	}
 
 	mouseDown(e, ctx, shapeList) {
@@ -128,8 +128,7 @@ export class Brush {
 
 		drawShapes(ctx, shapeList);
 
-		const newPoint = {x: e.pageX, y: e.pageY};
-		this.shape.points.push(newPoint);
+		this.shape.points.push({x: e.pageX, y: e.pageY});
 
 		this.shape.drawLine(ctx);
 	}
@@ -142,6 +141,72 @@ export class Brush {
 		drawShapes(ctx, shapeList);
 
 		// Empty points array so it is ready to hold new values for next line shape
+		this.shapeData.points = [];
+
+		return shapeList;
+	}
+}
+
+/****************** ARROW **********************/
+const DEFAULT_ARROW_DATA = {
+	// TODO: Set shapeData from settings props
+	type: 'arrow',
+	strokeStyle: '#f22a2a',
+	lineWidth: 3,
+	lineDash: [0, 0],
+	points: []
+}
+
+export class Arrow {
+	constructor() {
+		this.type = 'arrow';
+		this.shapeData = DEFAULT_ARROW_DATA;
+	}
+
+	mouseDown(e, ctx, shapeList) {
+		console.log('arrow mouseDown');
+
+		drawShapes(ctx, shapeList);
+
+		this.shapeData.x = e.pageX;
+		this.shapeData.y = e.pageY;
+
+		this.shape = new Shape(this.shapeData);
+		this.shape.points.push({ 
+			x: e.pageX, 
+			y: e.pageY 
+		});
+
+		// Set shape styles
+		ctx.strokeStyle = this.shape.strokeStyle;
+		ctx.lineWidth = this.shape.lineWidth;
+		ctx.lineDash = this.shape.lineDash;
+
+		ctx.moveTo(this.shape.x, this.shape.y);
+		ctx.beginPath();
+	}
+
+	mouseMove(e, ctx, shapeList) {
+		console.log('arrow mouseMove');
+
+		drawShapes(ctx, shapeList);
+
+		if (this.shape.points.length > 1) {
+			this.shape.points.pop();
+		}
+		this.shape.points.push({ x: e.pageX, y: e.pageY });
+	
+		ctx.beginPath();
+		this.shape.drawArrow(ctx);
+	}
+
+	mouseUp(e, ctx, shapeList) {
+		console.log('arrow mouseUp');
+
+		shapeList.push(this.shape);
+
+		drawShapes(ctx, shapeList);
+
 		this.shapeData.points = [];
 
 		return shapeList;
@@ -161,7 +226,7 @@ const DEFAULT_ERASER_DATA = {
 export class Eraser {
 	constructor() {
 		this.type = 'eraser';
-		this.shapeData = { ...DEFAULT_ERASER_DATA }
+		this.shapeData = DEFAULT_ERASER_DATA;
 	}
 
 	mouseDown(e, ctx, shapeList) {
@@ -173,7 +238,7 @@ export class Eraser {
 		this.shapeData.y = e.pageY;
 
 		this.shape = new Shape(this.shapeData);
-		this.shape.points.push({x: e.pageX, y: e.pageY});
+		this.shape.points.push({ x: e.pageX, y: e.pageY });
 
 		ctx.strokeStyle = this.shape.strokeStyle;
 		ctx.lineWidth = this.shape.lineWidth;

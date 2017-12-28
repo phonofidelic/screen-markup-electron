@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 // import Shape from '../lib/Shape';
 // import Rectangle from '../lib/Rectangle';
-import { Rectangle, Brush, Text, Eraser, Crop } from '../lib/Tools';
+// import { Rectangle, Brush, Arrow, Text, Eraser, Crop } from '../lib/Tools';
 
 class Canvas extends Component {
 	constructor(props) {
@@ -13,13 +13,6 @@ class Canvas extends Component {
 		this.handleMouseDown = this.handleMouseDown.bind(this);
 		this.handleMouseMove = this.handleMouseMove.bind(this);
 		this.handleMouseUp = this.handleMouseUp.bind(this);
-		this.tools = {
-			rectangle: new Rectangle(),
-			bruh: new Brush(),
-			text: new Text(),
-			eraser: new Eraser(),
-			crop: new Crop()
-		};
 		this.mouseIsDown = false;
 		this.shapeList = [];
 	}
@@ -62,6 +55,7 @@ class Canvas extends Component {
 	}
 
 	drawScreenshot(ctx, screenshot) {
+		// console.log('drawScreenshot called')
 		ctx.drawImage(screenshot, 0, 0, window.screen.width, window.screen.height);
 	}
 

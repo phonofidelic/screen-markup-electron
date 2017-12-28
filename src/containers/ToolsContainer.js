@@ -9,17 +9,18 @@ class ToolsContainer extends Component {
     super(props);
 
     // Default tool selection
-    this.props.selectRectangle();
+    this.props.selectTool(this.props.tools.selectedTool);
+    this.selectTool = this.props.selectTool.bind(this);
   }
 
   componentDidMount() {
-    const { selectRectangle, selectBrush } = this.props;
+    const { selectTool } = this.props.tools;
     if (window.require) {
       const { ipcRenderer } = window.require('electron');
 
       // Listen for tool selection sent from keyboard shortcuts in main process
-      ipcRenderer.on('select-rectangle', () => { selectRectangle(); });
-      ipcRenderer.on('select-brush', () => { selectBrush(); });
+      ipcRenderer.on('select-rectangle', () => { this.selectTool('rectangle'); });
+      ipcRenderer.on('select-brush', () => { this.selectTool('brush'); });
     } 
   }
 

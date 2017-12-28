@@ -2,7 +2,7 @@ import { SET_COLOR, SELECT_TOOL, TOGGLE_TOOLS } from '../actiontypes';
 
 const INITIAL_STATE = {
 	selectedColor: '#f22a2a',
-	selectedTool: 'no_tool',
+	selectedTool: 'rectangle',
 	toolsList: [
 		{
 			faName: 'square-o',
@@ -14,6 +14,11 @@ const INITIAL_STATE = {
 			title: 'Brush [B]',
 			tooltype: 'brush'
 		},
+		{
+			faName: 'mouse-pointer',
+			title: 'Arrow [A]',
+			tooltype: 'arrow'
+		}
 		// {
 		// 	faName: 'eraser',
 		// 	title: 'Eraser [E]',
